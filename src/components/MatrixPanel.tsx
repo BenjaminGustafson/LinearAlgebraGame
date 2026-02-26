@@ -1,14 +1,24 @@
 import { useState } from 'react'
+import type { Matrix3x3 } from '../App'
 
-const defaultMatrix = Array(9).fill('')
+interface MatrixPanelProps {
+  onAdd: (values: Matrix3x3) => void
+}
 
-export default function MatrixPanel() {
-  const [values, setValues] = useState<string[]>(defaultMatrix)
+const IDENTITY: Matrix3x3 = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+
+export default function MatrixPanel({ onAdd }: MatrixPanelProps) {
+  const [values, setValues] = useState<string[]>(IDENTITY.map(String))
 
   const handleChange = (index: number, val: string) => {
     const next = [...values]
     next[index] = val
     setValues(next)
+  }
+
+  const handleAdd = () => {
+    const nums = values.map(v => parseFloat(v) || 0) as Matrix3x3
+    onAdd(nums)
   }
 
   return (
@@ -28,7 +38,6 @@ export default function MatrixPanel() {
       fontFamily: '"IBM Plex Mono", "Courier New", monospace',
     }}>
 
-      {/* Header */}
       <div style={{ textAlign: 'center' }}>
         <div style={{
           fontSize: '9px',
@@ -44,15 +53,11 @@ export default function MatrixPanel() {
         }}>Matrix</div>
       </div>
 
-      {/* Bracket + Grid wrapper */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-
-        {/* Left bracket */}
         <svg width="10" height="108" viewBox="0 0 10 108" fill="none">
           <path d="M8 2 H3 V106 H8" stroke="#444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
 
-        {/* 3x3 Grid */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 48px)',
@@ -78,7 +83,6 @@ export default function MatrixPanel() {
                 outline: 'none',
                 fontFamily: 'inherit',
                 transition: 'border-color 0.15s, box-shadow 0.15s',
-                MozAppearance: 'textfield',
               } as React.CSSProperties}
               onFocus={e => {
                 e.currentTarget.style.borderColor = '#5aff8a'
@@ -92,15 +96,13 @@ export default function MatrixPanel() {
           ))}
         </div>
 
-        {/* Right bracket */}
         <svg width="10" height="108" viewBox="0 0 10 108" fill="none">
           <path d="M2 2 H7 V106 H2" stroke="#444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-
       </div>
 
-      {/* Add Button */}
       <button
+        onClick={handleAdd}
         style={{
           width: '138px',
           height: '34px',
@@ -128,7 +130,6 @@ export default function MatrixPanel() {
       >
         + Add
       </button>
-
     </div>
   )
 }
