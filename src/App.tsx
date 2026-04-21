@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { create } from 'zustand';
+declare const Desmos: any; 
 
 
 type Matrix2x2 = [[number, number], [number, number]];
@@ -71,15 +72,8 @@ function App() {
       >
          Undo
       </button>
+      <DesmosGraph />
       
-      <div
-        className="absolute bg-gray-700 rounded-xl border border-gray-500 shadow-lg flex flex-col items-center justify-center text-white"
-        style={{ left: 760, top: 340, width: 400, height: 400, fontSize: 24 }}
-      >
-        <div style={{ fontSize: 64, marginBottom: 16 }}>⚔️</div>
-        <div style={{ fontSize: 32, fontWeight: 'bold' }}>Attack Card</div>
-        <div style={{ fontSize: 20, color: '#9ca3af', marginTop: 8 }}>Deal 5 damage</div>
-      </div>
 
     </ScaledGameContainer>
   );
@@ -116,6 +110,28 @@ function ScaledGameContainer({ children }: { children: React.ReactNode }) {
   );
 }
 
+
+function DesmosGraph() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const calculator = Desmos.GraphingCalculator(containerRef.current, {
+      keypad: false,
+      expressions: false,
+    });
+    calculator.setExpression({ id: 'graph1', latex: 'y = x^2' });
+
+    return () => calculator.destroy();
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{ position: 'absolute', left: 1920/2-500, top: 240, width: 1000, height: 600 }}
+    />
+  );
+}
 
 // Helper function to place absolute coords within app
 function Block({ x, y, w, h, x2, y2, className }: { 
@@ -182,6 +198,7 @@ function Hand() {
   const cardGap = 16;
   const totalWidth = hand.length * cardWidth + (hand.length - 1) * cardGap;
   const startX = (1920 - totalWidth) / 2;
+  const startY = 900
 
   return (
     <>
@@ -190,7 +207,7 @@ function Hand() {
         return (
           <div
             key={card.id}
-            style={{ position: 'absolute', left: x, top: 800 }}
+            style={{ position: 'absolute', left: x, top: startY }}
           >
             <CardComponent card={card} />
           </div>
