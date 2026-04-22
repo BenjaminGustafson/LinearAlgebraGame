@@ -1,9 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { create } from 'zustand';
 declare const Desmos: any; 
 
 
 type Matrix2x2 = [[number, number], [number, number]];
+
+
+function multiply2x2(a: Matrix2x2, b: Matrix2x2): Matrix2x2 {
+  return [
+    [a[0][0]*b[0][0] + a[0][1]*b[1][0],  a[0][0]*b[0][1] + a[0][1]*b[1][1]],
+    [a[1][0]*b[0][0] + a[1][1]*b[1][0],  a[1][0]*b[0][1] + a[1][1]*b[1][1]],
+  ];
+}
+
+const identity: Matrix2x2 = [[1,0],[0,1]];
+
+
 
 interface Card {
   id: string;
@@ -55,6 +67,19 @@ export const useUIStore = create<UIStore>((set) => ({
     }
   })
 }));
+
+/**
+ * Multiply the matrix stack
+ * Multiplies from left to right (stack is rendered in opposite direction)
+ * If stack is empty return identity
+ */
+export const useStackProduct = (): Matrix2x2 => {
+  const matrixStack = useUIStore((state) => state.matrixStack);
+  return useMemo(
+    () => matrixStack.reduce((acc, card) => multiply2x2(acc, card.matrix), identity),
+    [matrixStack]
+  );
+};
 
 // State for 
 interface GameStore {
@@ -140,29 +165,44 @@ function ScaledGameContainer({ children }: { children: React.ReactNode }) {
 
 function DesmosGraph() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const calculatorRef = useRef<Desmos.Calculator | null>(null);
+  const transform: Matrix2x2 = useStackProduct()
 
   useEffect(() => {
     if (!containerRef.current) return;
-    const calculator = Desmos.GraphingCalculator(containerRef.current, {
+    calculatorRef.current = Desmos.GraphingCalculator(containerRef.current, {
       keypad: false,
       expressions: false,
+      showGrid:false,
     });
+    const calculator = calculatorRef.current!;
     // Based on https://www.desmos.com/calculator/yfeeqwkrhd
     //calculator.setExpression({ id: 'graph1', latex: 'y = x^2' });
     calculator.setExpression({ latex: 'n = 10' });
-    calculator.setExpression({ latex: 'a=1' });
-    calculator.setExpression({ latex: 'b=2' });
-    calculator.setExpression({ latex: 'c=2' });
-    calculator.setExpression({ latex: 'd=1' });
+    calculator.setExpression({ id:'a', latex: 'a=1' });
+    calculator.setExpression({ id:'b', latex: 'b=0' });
+    calculator.setExpression({ id:'c', latex: 'c=0' });
+    calculator.setExpression({ id:'d', latex: 'd=1' });
     calculator.setExpression({ latex: 'L=[-n...n]' });
     calculator.setExpression({ latex: 'i=(a,c)', hidden: 'true'});
     calculator.setExpression({ latex: 'j=(b,d)', hidden:'true'});
     calculator.setExpression({ latex: 'Lj+t(a,c)', parametricDomain: { min: '-n', max: 'n'}, color:'blue'});
     calculator.setExpression({ latex: 'Li+t(b,d)', parametricDomain: { min: '-n', max: 'n'}, color:'blue' });
 
-
     return () => calculator.destroy();
   }, []);
+
+  // Update transform
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const calculator = calculatorRef.current!;
+    calculator.setExpression({ id:'a', latex: `a=${transform[0][0]}` });
+    calculator.setExpression({ id:'b', latex: `b=${transform[0][1]}` });
+    calculator.setExpression({ id:'c', latex: `c=${transform[1][0]}` });
+    calculator.setExpression({ id:'d', latex: `d=${transform[1][1]}` });
+
+
+  }, [transform]);
 
   return (
     <div
