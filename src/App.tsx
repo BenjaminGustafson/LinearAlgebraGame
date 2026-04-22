@@ -27,17 +27,20 @@ interface UIStore {
   // Matrix stack
   matrixStack: Card[];
   addCardToStack: (card: Card) => void;
+  popStack: () => void;
   // Matrix hand
   hand: Card[];
   addCardToHand: (card: Card) => void;
   playCard: (id: string) => void;   // hand -> stack
   returnCard: (id: string) => void; // stack -> hand
-  popStack: () => void;
+  // Panels
+  matrixCreationPanel: boolean;
 }
 
 export const useUIStore = create<UIStore>((set) => ({
   hand: [],
   matrixStack: [],
+  matrixCreationPanel: false,
   addCardToHand: (card) => set((state) => ({ hand: [...state.hand, card] })),
   addCardToStack: (card) => set((state) => ({ matrixStack: [...state.matrixStack, card] })),
   playCard: (id) => set((state) => {
@@ -124,9 +127,21 @@ function App() {
       >
          Undo
       </button>
+      <button
+        className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
+        style={{ left: 1700, top: 900, width: 150, height: 150, fontSize: 24 }}
+        onClick={() => {}}
+      >
+         New Matrix
+      </button>
+      <button
+        className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
+        style={{ left: 100, top: 900, width: 150, height: 150, fontSize: 24 }}
+        onClick={() => {}}
+      >
+         Matrix Library
+      </button>
       <DesmosGraph />
-      
-
     </ScaledGameContainer>
   );
 }
