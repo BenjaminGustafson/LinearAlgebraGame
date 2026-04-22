@@ -15,12 +15,12 @@ interface UIStore {
   // Matrix stack
   matrixStack: Card[];
   addCardToStack: (card: Card) => void;
-
   // Matrix hand
   hand: Card[];
   addCardToHand: (card: Card) => void;
-  // Open panels
-  // Option toggles
+  playCard: (id: string) => void;   // hand -> stack
+  returnCard: (id: string) => void; // stack -> hand
+  popStack: () => void;
 }
 
 export const useUIStore = create<UIStore>((set) => ({
@@ -28,6 +28,32 @@ export const useUIStore = create<UIStore>((set) => ({
   matrixStack: [],
   addCardToHand: (card) => set((state) => ({ hand: [...state.hand, card] })),
   addCardToStack: (card) => set((state) => ({ matrixStack: [...state.matrixStack, card] })),
+  playCard: (id) => set((state) => {
+    const card = state.hand.find(c => c.id === id);
+    if (!card) return state;
+    return {
+      hand: state.hand.filter(c => c.id !== id),
+      matrixStack: [...state.matrixStack, card],
+    };
+  }),
+  returnCard: (id) => set((state) => {
+    const card = state.matrixStack.find(c => c.id === id);
+    if (!card) return state;
+    return {
+      matrixStack: state.matrixStack.filter(c => c.id !== id),
+      hand: [...state.hand, card],
+    };
+  }),
+  popStack: () => set((state) => {
+    if (state.matrixStack.length == 0){
+      return {}
+    }
+    const card = state.matrixStack[state.matrixStack.length-1]
+    return {
+      matrixStack: state.matrixStack.filter(c => c.id !== card.id),
+      hand: [...state.hand, card],
+    }
+  })
 }));
 
 // State for 
@@ -44,6 +70,7 @@ interface GameStore {
 function App() {
   const addCardToHand = useUIStore((state) => state.addCardToHand);
   const addCardToStack = useUIStore((state) => state.addCardToStack);
+  const popStack = useUIStore((state) => state.popStack);
 
   useEffect(() => {
     const testCard: Card = {id : '0', matrix: [[1, 0], [0, 1]] as Matrix2x2};
@@ -63,12 +90,12 @@ function App() {
       <Hand />
       <MatrixStack />
       <div className="absolute text-white text-[48px]" style={{ left: 400, top: 20 }}>
-        Skewbert
+        Skewbert's Matrix Factory
       </div>
       <button
         className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
         style={{ left: 100, top: 120, width: 100, height: 60, fontSize: 24 }}
-        onClick={() => console.log('clicked')}
+        onClick={() => popStack()}
       >
          Undo
       </button>
@@ -120,7 +147,19 @@ function DesmosGraph() {
       keypad: false,
       expressions: false,
     });
-    calculator.setExpression({ id: 'graph1', latex: 'y = x^2' });
+    // Based on https://www.desmos.com/calculator/yfeeqwkrhd
+    //calculator.setExpression({ id: 'graph1', latex: 'y = x^2' });
+    calculator.setExpression({ latex: 'n = 10' });
+    calculator.setExpression({ latex: 'a=1' });
+    calculator.setExpression({ latex: 'b=2' });
+    calculator.setExpression({ latex: 'c=2' });
+    calculator.setExpression({ latex: 'd=1' });
+    calculator.setExpression({ latex: 'L=[-n...n]' });
+    calculator.setExpression({ latex: 'i=(a,c)', hidden: 'true'});
+    calculator.setExpression({ latex: 'j=(b,d)', hidden:'true'});
+    calculator.setExpression({ latex: 'Lj+t(a,c)', parametricDomain: { min: '-n', max: 'n'}, color:'blue'});
+    calculator.setExpression({ latex: 'Li+t(b,d)', parametricDomain: { min: '-n', max: 'n'}, color:'blue' });
+
 
     return () => calculator.destroy();
   }, []);
@@ -193,6 +232,7 @@ function CardComponent({ card }: { card: Card }) {
 
 function Hand() {
   const hand = useUIStore((state) => state.hand);
+  const playCard = useUIStore((state) => state.playCard);
 
   const cardWidth = 200;
   const cardGap = 16;
@@ -208,6 +248,7 @@ function Hand() {
           <div
             key={card.id}
             style={{ position: 'absolute', left: x, top: startY }}
+            onDoubleClick={() => playCard(card.id)}
           >
             <CardComponent card={card} />
           </div>
