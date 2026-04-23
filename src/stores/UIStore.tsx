@@ -17,13 +17,15 @@ export interface UIStore {
   playCard: (id: string) => void;   // hand -> stack
   returnCard: (id: string) => void; // stack -> hand
   // Panels
-  matrixCreationPanel: boolean;
+  matrixBuilderPanel: boolean;
+  toggleMatrixBuilder: () => void;
 }
 
 export const useUIStore = create<UIStore>((set) => ({
   hand: [],
   matrixStack: [],
-  matrixCreationPanel: false,
+  matrixBuilderPanel: false,
+  toggleMatrixBuilder: () => set((state) => ({matrixBuilderPanel: !state.matrixBuilderPanel})),
   addCardToHand: (card) => set((state) => ({ hand: [...state.hand, card] })),
   addCardToStack: (card) => set((state) => ({ matrixStack: [...state.matrixStack, card] })),
   playCard: (id) => set((state) => {

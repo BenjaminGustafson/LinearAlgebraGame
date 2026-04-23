@@ -5,18 +5,21 @@ import { useUIStore } from './stores/UIStore';
 import { DesmosGraph } from './components/DesmosGraph';
 import { MatrixStack } from './components/MatrixStack';
 import { Hand } from './components/Hand';
+import MatrixBuilder from './components/MatrixBuilder';
 
 function App() {
   const addCardToHand = useUIStore((state) => state.addCardToHand);
   const addCardToStack = useUIStore((state) => state.addCardToStack);
   const popStack = useUIStore((state) => state.popStack);
+  const toggleMatrixBuilder = useUIStore((state) => state.toggleMatrixBuilder);
+
 
   useEffect(() => {
-    const testCard: Card = {id : '0', matrix: [[1, 0], [0, 1]] as Mat2};
+    const testCard: Card = { id: '0', matrix: [[1, 0], [0, 1]] as Mat2 };
     addCardToHand(testCard);
-    const testCard2: Card = {id : '1', matrix: [[2, 0], [0, 1]] as Mat2};
+    const testCard2: Card = { id: '1', matrix: [[2, 0], [0, 1]] as Mat2 };
     addCardToHand(testCard2);
-    const testCard3: Card = {id : '2', matrix: [[2, -1], [0, 1]] as Mat2};
+    const testCard3: Card = { id: '2', matrix: [[2, -1], [0, 1]] as Mat2 };
     addCardToStack(testCard3);
   }, []);
 
@@ -36,23 +39,24 @@ function App() {
         style={{ left: 100, top: 120, width: 100, height: 60, fontSize: 24 }}
         onClick={() => popStack()}
       >
-         Undo
+        Undo
       </button>
       <button
         className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
         style={{ left: 1700, top: 900, width: 150, height: 150, fontSize: 24 }}
-        onClick={() => {}}
+        onClick={() => { toggleMatrixBuilder() }}
       >
-         New Matrix
+        New Matrix
       </button>
       <button
         className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
         style={{ left: 100, top: 900, width: 150, height: 150, fontSize: 24 }}
-        onClick={() => {}}
+        onClick={() => { }}
       >
-         Matrix Library
+        Matrix Library
       </button>
       <DesmosGraph />
+      <MatrixBuilder/>
     </ScaledGameContainer>
   );
 }
@@ -79,7 +83,7 @@ function ScaledGameContainer({ children }: { children: React.ReactNode }) {
     <div className="w-screen h-screen bg-gray-950 flex items-center justify-center">
       <div
         ref={containerRef}
-        style={{ width: 1920, height: 1080, transform: `scale(${scale})`, transformOrigin: 'center', flexShrink: 0}}
+        style={{ width: 1920, height: 1080, transform: `scale(${scale})`, transformOrigin: 'center', flexShrink: 0 }}
         className="bg-gray-100"
       >
         {children}
@@ -90,11 +94,11 @@ function ScaledGameContainer({ children }: { children: React.ReactNode }) {
 
 
 // Helper function to place absolute coords within app
-function Block({ x, y, w, h, x2, y2, className }: { 
-  x: number; y: number; 
-  w?: number; h?: number; 
-  x2?: number; y2?: number; 
-  className?: string 
+function Block({ x, y, w, h, x2, y2, className }: {
+  x: number; y: number;
+  w?: number; h?: number;
+  x2?: number; y2?: number;
+  className?: string
 }) {
   const width = w ?? (x2! - x);
   const height = h ?? (y2! - y);
@@ -106,7 +110,5 @@ function Block({ x, y, w, h, x2, y2, className }: {
     />
   );
 }
-
-
 
 export default App;

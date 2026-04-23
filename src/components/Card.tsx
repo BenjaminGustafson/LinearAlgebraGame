@@ -4,6 +4,7 @@ import type { Mat2 } from '../types/Matrix.tsx'
 export interface Card {
     id: string;
     matrix: Mat2;
+    //matrix: string[];
 }
 
 /**
