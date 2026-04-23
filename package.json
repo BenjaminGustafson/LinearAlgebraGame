@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cortex-js/compute-engine": "^0.55.6",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@tailwindcss/vite": "^4.2.1",
     "jquery": "^4.0.0",
+    "mathjs": "^15.2.0",
     "mathquill": "^0.10.1-a",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

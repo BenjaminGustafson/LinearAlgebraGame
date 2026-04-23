@@ -3,8 +3,12 @@ import type { Mat2 } from '../types/Matrix.tsx'
 
 export interface Card {
     id: string;
+    expressionMatrix: string[][];
     matrix: Mat2;
-    //matrix: string[];
+}
+
+export function createCard(expressionMatrix: string[][], matrix:Mat2) : Card {
+  return {id: crypto.randomUUID(), expressionMatrix, matrix}
 }
 
 /**
