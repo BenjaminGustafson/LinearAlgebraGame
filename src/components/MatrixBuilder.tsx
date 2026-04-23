@@ -1,6 +1,6 @@
-import { useUIStore } from '../stores/UIStore';
+import { useUIState } from '../stores/UIState';
 import { useEffect, useRef } from 'react';
-import { createCard } from '../components/Card';
+import { numericCard } from '../components/Card';
 import type { Card} from '../components/Card';
 import { ComputeEngine } from '@cortex-js/compute-engine';
 import type { Mat2 } from '../types/Matrix';
@@ -41,9 +41,9 @@ function evaluateLatex(latex: string, variables: Record<string, number>):
 
 
 export default function MatrixBuilder() {
-    const toggleMatrixBuilder = useUIStore((state) => state.toggleMatrixBuilder);
-    const addCardToHand = useUIStore((state) => state.addCardToHand);
-    const matrixBuilderPanel = useUIStore((state) => state.matrixBuilderPanel);
+    const toggleMatrixBuilder = useUIState((state) => state.toggleMatrixBuilder);
+    const addCardToHand = useUIState((state) => state.addCardToHand);
+    const matrixBuilderPanel = useUIState((state) => state.matrixBuilderPanel);
     const inputRefs = useRef<HTMLSpanElement[]>([]);
     const mqFields = useRef<MathField[]>([]);  
 
@@ -76,12 +76,12 @@ export default function MatrixBuilder() {
                     className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
                     style={{ left: 200, top: 200, width: 150, height: 150, fontSize: 24 }}
                     onClick={() => { 
-                        const expressions = [
+                        const expressionMatrix = [
                             [mqFields.current[0].latex(), mqFields.current[1].latex()],
                             [mqFields.current[2].latex(), mqFields.current[3].latex()],
                         ]
 
-                        const evaluated = expressions.map(row =>
+                        const evaluated = expressionMatrix.map(row =>
                             row.map(cell => evaluateLatex(cell, {}))
                         );
                         console.log(evaluated)
@@ -98,8 +98,7 @@ export default function MatrixBuilder() {
                             row.map(cell => (cell as { isValid: true; value: number }).value)
                         ) as Mat2;
 
-                        const newCard = createCard(expressions, matrix);
-                        addCardToHand(newCard);
+                        addCardToHand({expressionMatrix, matrix});
                         toggleMatrixBuilder()
                     }}
                 >Create</button>

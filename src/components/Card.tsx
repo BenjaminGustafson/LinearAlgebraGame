@@ -1,14 +1,15 @@
 import type { Mat2 } from '../types/Matrix.tsx'
 
-
 export interface Card {
-    id: string;
     expressionMatrix: string[][];
     matrix: Mat2;
 }
 
-export function createCard(expressionMatrix: string[][], matrix:Mat2) : Card {
-  return {id: crypto.randomUUID(), expressionMatrix, matrix}
+export function numericCard(values: number[][]) : Card {
+  return {
+    expressionMatrix: values.map(row => row.map(String)),
+    matrix: values as Mat2
+  }
 }
 
 /**
@@ -32,7 +33,8 @@ export function CardComponent({ card }: { card: Card }) {
       alignItems: 'center',
       justifyContent: 'center',
       userSelect: 'none',
-    }}>
+    }}
+    className="hover:bg-gray-500">
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',

@@ -1,9 +1,9 @@
-import { useUIStore } from '../stores/UIStore';
+import { useUIState } from '../stores/UIState';
 import { CardComponent } from './Card';
 
 export function Hand() {
-  const hand = useUIStore((state) => state.hand);
-  const playCard = useUIStore((state) => state.playCard);
+  const hand = useUIState((state) => state.hand);
+  const playCard = useUIState((state) => state.playCard);
 
   const cardWidth = 200;
   const cardGap = 16;
@@ -17,9 +17,8 @@ export function Hand() {
         const x = startX + i * (cardWidth + cardGap);
         return (
           <div
-            key={card.id}
             style={{ position: 'absolute', left: x, top: startY }}
-            onDoubleClick={() => playCard(card.id)}
+            onClick={() => playCard(i)}
           >
             <CardComponent card={card} />
           </div>

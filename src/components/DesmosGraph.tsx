@@ -1,7 +1,7 @@
 declare const Desmos: any; 
 import { useEffect, useRef } from 'react';
 import type { Mat2 } from '../types/Matrix';
-import { useStackProduct } from '../stores/UIStore';
+import { useStackProduct } from '../stores/UIState';
 
 
 
@@ -30,6 +30,9 @@ export function DesmosGraph() {
       calculator.setExpression({ latex: 'j=(b,d)', hidden:'true'});
       calculator.setExpression({ latex: 'Lj+t(a,c)', parametricDomain: { min: '-n', max: 'n'}, color:'blue'});
       calculator.setExpression({ latex: 'Li+t(b,d)', parametricDomain: { min: '-n', max: 'n'}, color:'blue' });
+      calculator.setExpression({ latex: '\\Delta=ad-bc'});
+      calculator.setExpression({ latex: '\\operatorname{polygon}((0,0),(a,c),(a+b,c+d),(b,d)) \\{\\Delta>0\\}',color:'purple'})
+      calculator.setExpression({ latex: '\\operatorname{polygon}((0,0),(a,c),(a+b,c+d),(b,d)) \\{\\Delta<0\\}',color:'orange'})
   
       return () => calculator.destroy();
     }, []);

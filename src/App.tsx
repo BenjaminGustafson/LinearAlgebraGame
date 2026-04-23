@@ -1,26 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Card } from './components/Card';
+import { numericCard, type Card } from './components/Card';
 import type { Mat2 } from './types/Matrix';
-import { useUIStore } from './stores/UIStore';
+import { useUIState } from './stores/UIState';
 import { DesmosGraph } from './components/DesmosGraph';
 import { MatrixStack } from './components/MatrixStack';
 import { Hand } from './components/Hand';
 import MatrixBuilder from './components/MatrixBuilder';
 
 function App() {
-  const addCardToHand = useUIStore((state) => state.addCardToHand);
-  const addCardToStack = useUIStore((state) => state.addCardToStack);
-  const popStack = useUIStore((state) => state.popStack);
-  const toggleMatrixBuilder = useUIStore((state) => state.toggleMatrixBuilder);
+  const addCardToHand = useUIState((state) => state.addCardToHand);
+  const addCardToStack = useUIState((state) => state.addCardToStack);
+  const popStack = useUIState((state) => state.popStack);
+  const toggleMatrixBuilder = useUIState((state) => state.toggleMatrixBuilder);
 
 
   useEffect(() => {
-    const testCard: Card = { id: '0', matrix: [[1, 0], [0, 1]] as Mat2 };
+    const testCard: Card = numericCard([[1, 0], [0, 1]])
     addCardToHand(testCard);
-    const testCard2: Card = { id: '1', matrix: [[2, 0], [0, 1]] as Mat2 };
-    addCardToHand(testCard2);
-    const testCard3: Card = { id: '2', matrix: [[2, -1], [0, 1]] as Mat2 };
-    addCardToStack(testCard3);
+    // const testCard2: Card = {  matrix: [[2, 0], [0, 1]] as Mat2 };
+    // addCardToHand(testCard2);
+    // const testCard3: Card = {  matrix: [[2, -1], [0, 1]] as Mat2 };
+    // addCardToStack(testCard3);
   }, []);
 
   return (
