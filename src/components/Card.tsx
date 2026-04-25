@@ -1,15 +1,50 @@
 import type { Mat2 } from '../types/Matrix.tsx'
+import { useEffect, useRef } from 'react';
+import { mathQuillPromise } from '../external/MathQuillLoader';
+import { useUIState } from '../stores/UIState.tsx';
+import { ComputeEngine } from '@cortex-js/compute-engine';
+
+const ce = new ComputeEngine();
 
 export interface Card {
     expressionMatrix: string[][];
+    simplifiedMatrix: string[][];
+    // substituted
     matrix: Mat2;
 }
 
 export function numericCard(values: number[][]) : Card {
+  const stringMat = values.map(row => row.map(String));
   return {
-    expressionMatrix: values.map(row => row.map(String)),
+    expressionMatrix: stringMat,
+    simplifiedMatrix: stringMat,
     matrix: values as Mat2
   }
+}
+
+/**
+ * Create a card from an expression KNOWN TO BE VALID AND SIMPLIFIED
+ */
+export function cardFromSimplified(expressions: string[][]): Card{
+
+  return {
+    expressionMatrix: expressions,
+    simplifiedMatrix: expressions,
+    matrix: expressions.map(row => row.map(e => ce.parse(e).numericValue)) as Mat2,
+  }
+}
+
+
+function StaticMath({ latex }: { latex: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+      mathQuillPromise.then((MQ) => {
+          if (ref.current) MQ.StaticMath(ref.current).latex(latex);
+      });
+  }, [latex]);
+
+  return <span ref={ref} />;
 }
 
 /**
@@ -18,14 +53,14 @@ export function numericCard(values: number[][]) : Card {
  * And be a square div
  * Later: dnd-kit
  */
-export function CardComponent({ card }: { card: Card }) {
-  const [[a, b], [c, d]] = card.matrix;
+export function CardComponent({ card, fixed = false }: { card: Card, fixed:boolean }) {
+  const simplifyExpressions = useUIState(state => state.simplifyExpressions)
+  const [[a, b], [c, d]] = simplifyExpressions ? card.simplifiedMatrix : card.expressionMatrix;
 
   return (
     <div style={{
-      width: 100,
-      height: 100,
-      background: '#1e293b',
+      width: 200,
+      height: 200,
       border: '1px solid #334155',
       borderRadius: 12,
       display: 'flex',
@@ -33,23 +68,24 @@ export function CardComponent({ card }: { card: Card }) {
       alignItems: 'center',
       justifyContent: 'center',
       userSelect: 'none',
-    }}
-    className="hover:bg-gray-500">
+      overflow: 'hidden',
+  }}
+  className={`bg-[#1e293b] hover:bg-[#09121f] ${fixed ? "pointer-events-none" : ""}`}>
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '8px 24px',
-        fontSize: 28,
-        fontWeight: 500,
-        color: 'white',
-        fontFamily: 'monospace',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '8px 24px',
+          fontWeight: 500,
+          color: 'white',
+          width: '180px',
+          overflow: 'hidden',
       }}>
-        <span style={{ textAlign: 'right' }}>{a}</span>
-        <span style={{ textAlign: 'left'  }}>{b}</span>
-        <span style={{ textAlign: 'right' }}>{c}</span>
-        <span style={{ textAlign: 'left'  }}>{d}</span>
+          <span style={{ textAlign: 'right', overflow: 'hidden', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={a} /></span>
+          <span style={{ textAlign: 'left',  overflow: 'hidden', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={b} /></span>
+          <span style={{ textAlign: 'right', overflow: 'hidden', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={c} /></span>
+          <span style={{ textAlign: 'left',  overflow: 'hidden', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={d} /></span>
       </div>
-    </div>
+  </div>
   );
 }
 

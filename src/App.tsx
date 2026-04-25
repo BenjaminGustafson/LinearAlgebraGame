@@ -1,22 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import { numericCard, type Card } from './components/Card';
 import type { Mat2 } from './types/Matrix';
-import { useUIState } from './stores/UIState';
+import { useUIState, useStackProduct } from './stores/UIState';
 import { DesmosGraph } from './components/DesmosGraph';
 import { MatrixStack } from './components/MatrixStack';
 import { Hand } from './components/Hand';
 import MatrixBuilder from './components/MatrixBuilder';
+import { useGameState } from './stores/GameState';
+import { ToggleButton } from './components/ToggleButton';
 
 function App() {
   const addCardToHand = useUIState((state) => state.addCardToHand);
   const addCardToStack = useUIState((state) => state.addCardToStack);
   const popStack = useUIState((state) => state.popStack);
   const toggleMatrixBuilder = useUIState((state) => state.toggleMatrixBuilder);
-
+  const setFixedLHS = useGameState(state => state.setFixedLHS);
+  const toggleSimplify = useUIState(state => state.toggleSimplify);
+  const toggleResultTarget = useUIState(state => state.toggleResultTarget);
 
   useEffect(() => {
-    const testCard: Card = numericCard([[1, 0], [0, 1]])
+    const testCard: Card = numericCard([[2, 0], [0, 1]])
     addCardToHand(testCard);
+    setFixedLHS([numericCard([[1, 1], [0, 2]])]);
     // const testCard2: Card = {  matrix: [[2, 0], [0, 1]] as Mat2 };
     // addCardToHand(testCard2);
     // const testCard3: Card = {  matrix: [[2, -1], [0, 1]] as Mat2 };
@@ -25,10 +30,6 @@ function App() {
 
   return (
     <ScaledGameContainer>
-      <Block x={0} y={0} x2={1920} y2={100} className="bg-gray-400" />
-      <Block x={0} y={110} x2={1920} y2={220} className="bg-gray-500" />
-      <Block x={0} y={230} x2={1920} y2={870} className="bg-gray-400" />
-      <Block x={0} y={880} x2={1920} y2={1080} className="bg-gray-500" />
       <Hand />
       <MatrixStack />
       <div className="absolute text-white text-[48px]" style={{ left: 400, top: 20 }}>
@@ -55,6 +56,18 @@ function App() {
       >
         Matrix Library
       </button>
+      <div className="absolute"
+        style={{ left: 250, top: 150 }}>
+          <ToggleButton
+            label="Simplify"
+            onChange={ () => { toggleSimplify() }}
+          />
+          <ToggleButton
+            label="Show result"
+            defaultEnabled={true}
+            onChange={ () => { toggleResultTarget() }}
+          />
+      </div>
       <DesmosGraph />
       <MatrixBuilder/>
     </ScaledGameContainer>
@@ -80,11 +93,11 @@ function ScaledGameContainer({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="w-screen h-screen bg-gray-950 flex items-center justify-center">
+    <div className="w-screen h-screen bg-gray-600 flex items-center justify-center overflow-hidden">
       <div
         ref={containerRef}
         style={{ width: 1920, height: 1080, transform: `scale(${scale})`, transformOrigin: 'center', flexShrink: 0 }}
-        className="bg-gray-100"
+        className="bg-gray-500"
       >
         {children}
       </div>

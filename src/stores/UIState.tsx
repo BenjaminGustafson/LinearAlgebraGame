@@ -1,9 +1,11 @@
 import type { Card } from '../components/Card';
+import { cardFromSimplified } from '../components/Card';
 import { create } from 'zustand';
 import {  useMemo } from 'react';
 import type { Mat2 } from '../types/Matrix';
 import { multiplyMat2, id2 } from '../types/Matrix';
-
+import { useGameState } from './GameState';
+import { simplify } from '@cortex-js/compute-engine';
 
 // State for current UI
 export interface UIState {
@@ -18,6 +20,13 @@ export interface UIState {
   // Panels
   matrixBuilderPanel: boolean;
   toggleMatrixBuilder: () => void;
+  // Toggle options
+  simplifyExpressions: boolean;
+  toggleSimplify: () => void;
+  substituteVariabless: boolean; // substitute variables
+  toggleVariables: () => void;
+  showResultNotTarget: boolean;
+  toggleResultTarget: () => void;
 }
 
 export const useUIState = create<UIState>((set) => ({
@@ -44,18 +53,45 @@ export const useUIState = create<UIState>((set) => ({
       matrixStack: state.matrixStack.slice(0,-1),
       hand: [...state.hand, card],
     }
-  })
+  }),
+  simplifyExpressions: false,
+  toggleSimplify: () => set((state) => ({simplifyExpressions: !state.simplifyExpressions})),
+  substituteVariabless: false,
+  toggleVariables: () => set((state) => ({substituteVariabless: !state.substituteVariabless})),
+  showResultNotTarget: true,
+  toggleResultTarget: () => set((state) => ({showResultNotTarget: !state.showResultNotTarget})),
 }));
+
+
+export function multiplyExprMat2(a: string[][], b: string[][]): string[][] {
+  return [
+    [`(${a[0][0]})(${b[0][0]}) + (${a[0][1]})(${b[1][0]})`, `(${a[0][0]})(${b[0][1]}) + (${a[0][1]})(${b[1][1]})`],
+    [`(${a[1][0]})(${b[0][0]}) + (${a[1][1]})(${b[1][0]})`, `(${a[1][0]})(${b[0][1]}) + (${a[1][1]})(${b[1][1]})`],
+  ];
+}
+
+function simplifyMat2(m: string[][]): string[][] {
+  return m.map(row => row.map(cell => simplify(cell).latex));
+}
+
+export function multiplyExprMat2Stack(matrices: string[][][]): string[][] {
+  return matrices.reduce((acc, mat) => 
+    simplifyMat2(multiplyExprMat2(acc, mat)),
+    [['1','0'],['0','1']]
+  );
+}
 
 /**
  * Multiply the matrix stack
  * Multiplies from left to right (stack is rendered in opposite direction)
  * If stack is empty return identity
  */
-export const useStackProduct = (): Mat2 => {
+export const useStackProduct = (): Card => {
   const matrixStack = useUIState((state) => state.matrixStack);
+  const fixedLHS = useGameState(state => state.fixedLHS);
+  const combinedStack = fixedLHS.concat(matrixStack);
   return useMemo(
-    () => matrixStack.reduce((acc, card) => multiplyMat2(acc, card.matrix), id2),
-    [matrixStack]
+    () => cardFromSimplified(multiplyExprMat2Stack(combinedStack.map(card=>card.simplifiedMatrix))),
+    [matrixStack, fixedLHS]
   );
 };

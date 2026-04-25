@@ -4,36 +4,25 @@ import { numericCard } from '../components/Card';
 import type { Card} from '../components/Card';
 import { ComputeEngine } from '@cortex-js/compute-engine';
 import type { Mat2 } from '../types/Matrix';
+import { mathQuillPromise } from '../external/MathQuillLoader';
 
-
-// import $ from 'jquery';
-// (window as any).$ = (window as any).jQuery = $;
-
-async function loadMathQuill() {
-    const $ = (await import('jquery')).default;
-    (window as any).$ = (window as any).jQuery = $;
-
-    await import('mathquill/build/mathquill.js');
-    await import('mathquill/build/mathquill.css');
-    return window.MathQuill.getInterface(2);
-}
 
 const ce = new ComputeEngine();
 
 function evaluateLatex(latex: string, variables: Record<string, number>): 
     | { isValid: false, error: string } 
-    | { isValid: true; value: number } {
+    | { isValid: true; value: number, simplified: string} {
     try {
         Object.entries(variables).forEach(([name, value]) => {
             ce.assign(name, value);
         });
-        const expr = ce.parse(latex).N();
+        const expr = ce.parse(latex);
         const result = expr.numericValue;
 
         if (result === null) return {  isValid: false, error: 'null parse' };
         if (!isFinite(Number(result))) return { isValid: false, error: `bad value ${result}`};
 
-        return { isValid: true, value: Number(result) };
+        return { isValid: true, value: Number(result), simplified: expr.simplify().latex};
     } catch (e) {
         return { isValid: false, error: e instanceof Error ? e.message : String(e)};
     }
@@ -49,7 +38,7 @@ export default function MatrixBuilder() {
 
     useEffect(() => {
         if (!matrixBuilderPanel) return;
-        loadMathQuill().then((MQ) => {
+        mathQuillPromise.then((MQ) => {
             inputRefs.current.forEach((el, i) => {
                 if (el) mqFields.current[i] = MQ.MathField(el);
             });
@@ -59,7 +48,7 @@ export default function MatrixBuilder() {
     return (
         matrixBuilderPanel && (
             <div
-                className='bg-gray-500' 
+                className='bg-gray-400' 
                 style={{ position: 'absolute', left: 1920 / 2 - 500, top: 240, width: 1000, height: 600 }}>
                 <p>Matrix builder
                 </p>
@@ -84,21 +73,23 @@ export default function MatrixBuilder() {
                         const evaluated = expressionMatrix.map(row =>
                             row.map(cell => evaluateLatex(cell, {}))
                         );
-                        console.log(evaluated)
 
                         const allValid = evaluated.every(row => row.every(cell => cell.isValid));
 
                         if (!allValid) {
-                            // show some error UI
                             console.log('INVALID')
                             return;
                         }
 
                         const matrix = evaluated.map(row =>
-                            row.map(cell => (cell as { isValid: true; value: number }).value)
+                            row.map(cell => cell.value)
                         ) as Mat2;
 
-                        addCardToHand({expressionMatrix, matrix});
+                        const simplifiedMatrix = evaluated.map(row =>
+                            row.map(cell => cell.simplified)
+                        );
+
+                        addCardToHand({expressionMatrix, simplifiedMatrix, matrix});
                         toggleMatrixBuilder()
                     }}
                 >Create</button>

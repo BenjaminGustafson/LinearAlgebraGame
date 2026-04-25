@@ -9,7 +9,7 @@ export function Hand() {
   const cardGap = 16;
   const totalWidth = hand.length * cardWidth + (hand.length - 1) * cardGap;
   const startX = (1920 - totalWidth) / 2;
-  const startY = 900
+  const startY = 860
 
   return (
     <>
