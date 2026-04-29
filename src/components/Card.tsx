@@ -1,4 +1,4 @@
-import type { Mat2 } from '../types/Matrix.tsx'
+import type { Mat2 } from '../math/Matrix.tsx'
 import { useEffect, useRef } from 'react';
 import { mathQuillPromise } from '../external/MathQuillLoader';
 import { useUIState } from '../stores/UIState.tsx';
@@ -7,18 +7,20 @@ import { ComputeEngine } from '@cortex-js/compute-engine';
 const ce = new ComputeEngine();
 
 export interface Card {
-    expressionMatrix: string[][];
-    simplifiedMatrix: string[][];
-    // substituted
-    matrix: Mat2;
+  expressionMatrix: string[][];
+  simplifiedMatrix: string[][];
+  // substituted?
+  matrix: Mat2;
+  name: string,
 }
 
-export function numericCard(values: number[][]) : Card {
+export function numericCard(values: number[][], name:string = "") : Card {
   const stringMat = values.map(row => row.map(String));
   return {
     expressionMatrix: stringMat,
     simplifiedMatrix: stringMat,
-    matrix: values as Mat2
+    matrix: values as Mat2,
+    name,
   }
 }
 
@@ -53,7 +55,9 @@ function StaticMath({ latex }: { latex: string }) {
  * And be a square div
  * Later: dnd-kit
  */
-export function CardComponent({ card, fixed = false }: { card: Card, fixed:boolean }) {
+export function CardComponent({ card, hidden = false, fixed = false, color='#1e293b' }: { 
+  card: Card, hidden:boolean, fixed:boolean, color:string
+ }) {
   const simplifyExpressions = useUIState(state => state.simplifyExpressions)
   const [[a, b], [c, d]] = simplifyExpressions ? card.simplifiedMatrix : card.expressionMatrix;
 
@@ -69,8 +73,11 @@ export function CardComponent({ card, fixed = false }: { card: Card, fixed:boole
       justifyContent: 'center',
       userSelect: 'none',
       overflow: 'hidden',
+      backgroundColor: color, 
   }}
-  className={`bg-[#1e293b] hover:bg-[#09121f] ${fixed ? "pointer-events-none" : ""}`}>
+  className={`hover:bg-[#09121f] ${fixed ? "pointer-events-none" : ""}`}>
+    <span style={{ textAlign: 'center',  overflow: 'hidden', color: 'white', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={`\\text{${card.name ? card.name : ''}}`} /></span>
+
       <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',

@@ -1,9 +1,9 @@
 import type { Card } from '../components/Card';
 import { cardFromSimplified } from '../components/Card';
 import { create } from 'zustand';
-import {  useMemo } from 'react';
-import type { Mat2 } from '../types/Matrix';
-import { multiplyMat2, id2 } from '../types/Matrix';
+import { useMemo } from 'react';
+import type { Mat2 } from '../math/Matrix';
+import { multiplyMat2, id2 } from '../math/Matrix';
 import { useGameState } from './GameState';
 import { simplify } from '@cortex-js/compute-engine';
 
@@ -27,13 +27,16 @@ export interface UIState {
   toggleVariables: () => void;
   showResultNotTarget: boolean;
   toggleResultTarget: () => void;
+  taskMenuOpen: boolean;
+  toggleTaskMenu: () => void;
+  resetUIForNewTask: () => void;
 }
 
 export const useUIState = create<UIState>((set) => ({
   hand: [],
   matrixStack: [],
   matrixBuilderPanel: false,
-  toggleMatrixBuilder: () => set((state) => ({matrixBuilderPanel: !state.matrixBuilderPanel})),
+  toggleMatrixBuilder: () => set((state) => ({ matrixBuilderPanel: !state.matrixBuilderPanel })),
   addCardToHand: (card) => set((state) => ({ hand: [...state.hand, card] })),
   addCardToStack: (card) => set((state) => ({ matrixStack: [...state.matrixStack, card] })),
   playCard: (i) => set((state) => {
@@ -45,21 +48,30 @@ export const useUIState = create<UIState>((set) => ({
     };
   }),
   popStack: () => set((state) => {
-    if (state.matrixStack.length == 0){
+    if (state.matrixStack.length == 0) {
       return {}
     }
-    const card = state.matrixStack[state.matrixStack.length-1]
+    const card = state.matrixStack[state.matrixStack.length - 1]
     return {
-      matrixStack: state.matrixStack.slice(0,-1),
+      matrixStack: state.matrixStack.slice(0, -1),
       hand: [...state.hand, card],
     }
   }),
   simplifyExpressions: false,
-  toggleSimplify: () => set((state) => ({simplifyExpressions: !state.simplifyExpressions})),
+  toggleSimplify: () => set((state) => ({ simplifyExpressions: !state.simplifyExpressions })),
   substituteVariabless: false,
-  toggleVariables: () => set((state) => ({substituteVariabless: !state.substituteVariabless})),
+  toggleVariables: () => set((state) => ({ substituteVariabless: !state.substituteVariabless })),
   showResultNotTarget: true,
-  toggleResultTarget: () => set((state) => ({showResultNotTarget: !state.showResultNotTarget})),
+  toggleResultTarget: () => set((state) => ({ showResultNotTarget: !state.showResultNotTarget })),
+  taskMenuOpen: false,
+  toggleTaskMenu: () => set((state) => ({ taskMenuOpen: !state.taskMenuOpen })),
+  resetUIForNewTask: () => set((state) => {
+    return {
+      matrixStack: [],
+      matrixBuilderPanel: false,
+      hand: [],
+    }
+  })
 }));
 
 
@@ -75,9 +87,9 @@ function simplifyMat2(m: string[][]): string[][] {
 }
 
 export function multiplyExprMat2Stack(matrices: string[][][]): string[][] {
-  return matrices.reduce((acc, mat) => 
+  return matrices.reduce((acc, mat) =>
     simplifyMat2(multiplyExprMat2(acc, mat)),
-    [['1','0'],['0','1']]
+    [['1', '0'], ['0', '1']]
   );
 }
 
@@ -91,7 +103,7 @@ export const useStackProduct = (): Card => {
   const fixedLHS = useGameState(state => state.fixedLHS);
   const combinedStack = fixedLHS.concat(matrixStack);
   return useMemo(
-    () => cardFromSimplified(multiplyExprMat2Stack(combinedStack.map(card=>card.simplifiedMatrix))),
+    () => cardFromSimplified(multiplyExprMat2Stack(combinedStack.map(card => card.simplifiedMatrix))),
     [matrixStack, fixedLHS]
   );
 };

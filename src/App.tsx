@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { numericCard, type Card } from './components/Card';
-import type { Mat2 } from './types/Matrix';
+import type { Mat2 } from './math/Matrix';
 import { useUIState, useStackProduct } from './stores/UIState';
 import { DesmosGraph } from './components/DesmosGraph';
 import { MatrixStack } from './components/MatrixStack';
@@ -8,6 +8,8 @@ import { Hand } from './components/Hand';
 import MatrixBuilder from './components/MatrixBuilder';
 import { useGameState } from './stores/GameState';
 import { ToggleButton } from './components/ToggleButton';
+import TaskMenu from './components/TaskMenu';
+import { TASK_LIST } from './data/tasks';
 
 function App() {
   const addCardToHand = useUIState((state) => state.addCardToHand);
@@ -17,21 +19,17 @@ function App() {
   const setFixedLHS = useGameState(state => state.setFixedLHS);
   const toggleSimplify = useUIState(state => state.toggleSimplify);
   const toggleResultTarget = useUIState(state => state.toggleResultTarget);
+  const toggleTaskMenu = useUIState(state => state.toggleTaskMenu)
+  const currentTask = useGameState(state => state.currentTask) 
 
-  useEffect(() => {
-    const testCard: Card = numericCard([[2, 0], [0, 1]])
-    addCardToHand(testCard);
-    setFixedLHS([numericCard([[1, 1], [0, 2]])]);
-    // const testCard2: Card = {  matrix: [[2, 0], [0, 1]] as Mat2 };
-    // addCardToHand(testCard2);
-    // const testCard3: Card = {  matrix: [[2, -1], [0, 1]] as Mat2 };
-    // addCardToStack(testCard3);
-  }, []);
+  if (TASK_LIST[currentTask] && TASK_LIST[currentTask].loadTask)
+    TASK_LIST[currentTask].loadTask(Math.random())
 
   return (
     <ScaledGameContainer>
       <Hand />
       <MatrixStack />
+      
       <div className="absolute text-white text-[48px]" style={{ left: 400, top: 20 }}>
         Skewbert's Matrix Factory
       </div>
@@ -56,6 +54,13 @@ function App() {
       >
         Matrix Library
       </button>
+      <button
+        className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
+        style={{ left: 100, top: 50, width: 150, height: 60, fontSize: 24 }}
+        onClick={() => { toggleTaskMenu() }}
+      >
+        Task List
+      </button>
       <div className="absolute"
         style={{ left: 250, top: 150 }}>
           <ToggleButton
@@ -70,6 +75,7 @@ function App() {
       </div>
       <DesmosGraph />
       <MatrixBuilder/>
+      <TaskMenu />
     </ScaledGameContainer>
   );
 }

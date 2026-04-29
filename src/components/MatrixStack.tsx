@@ -17,6 +17,9 @@ export function MatrixStack() {
   const topY = 400;
   const stackStartX = startX - cardGap * fixedLHS.length;
 
+  targetCard.name = 'Target'
+  resultCard.name = 'Result'
+
   return (
     <>
       {fixedLHS.map((card, i) => {
@@ -50,7 +53,13 @@ export function MatrixStack() {
       <div
         style={{ position: 'absolute', left: 740, top: topY }}
       >
-        <CardComponent card={showResultNotTarget ? resultCard : targetCard} fixed/>
+        <CardComponent card={resultCard} color='#5850b5' fixed/>
+      </div>
+
+      <div
+        style={{ position: 'absolute', left: 740, top: topY+250 }}
+      >
+        <CardComponent card={targetCard} color='#b32d41' fixed/>
       </div>
     </>
   );

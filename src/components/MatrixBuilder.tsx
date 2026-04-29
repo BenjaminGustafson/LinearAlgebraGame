@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { numericCard } from '../components/Card';
 import type { Card} from '../components/Card';
 import { ComputeEngine } from '@cortex-js/compute-engine';
-import type { Mat2 } from '../types/Matrix';
+import type { Mat2 } from '../math/Matrix';
 import { mathQuillPromise } from '../external/MathQuillLoader';
 
 

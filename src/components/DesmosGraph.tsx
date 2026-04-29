@@ -1,7 +1,8 @@
 declare const Desmos: any; 
 import { useEffect, useRef } from 'react';
-import type { Mat2 } from '../types/Matrix';
+import type { Mat2 } from '../math/Matrix';
 import { useStackProduct } from '../stores/UIState';
+import { useGameState } from '../stores/GameState';
 
 
 
@@ -10,6 +11,7 @@ export function DesmosGraph() {
   const calculatorRef = useRef<Desmos.Calculator | null>(null);
   const transform: Mat2 = useStackProduct().matrix
   const prevTransformRef = useRef(transform);
+  const targetMatrix = useGameState(state => state.targetCard).matrix
   
     useEffect(() => {
       if (!containerRef.current) return;
@@ -76,16 +78,25 @@ export function DesmosGraph() {
       calculator.setExpression({ id: 'c', latex: `c=${lerp(oldTransform[1][0], newTransform[1][0])}` });
       calculator.setExpression({ id: 'd', latex: `d=${lerp(oldTransform[1][1], newTransform[1][1])}` });
 
+
       if (t < 1) {
         requestAnimationFrame(animate);
       } else {
         prevTransformRef.current = newTransform;
       }
     };
-
   const frameId = requestAnimationFrame(animate);
   return () => cancelAnimationFrame(frameId);
     }, [transform]);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const calculator = calculatorRef.current!;
+    calculator.setExpression({ id: 'a_2', latex: `a_2=${targetMatrix[0][0]}` });
+    calculator.setExpression({ id: 'b_2', latex: `b_2=${targetMatrix[0][1]}` });
+    calculator.setExpression({ id: 'c_2', latex: `c_2=${targetMatrix[1][0]}` });
+    calculator.setExpression({ id: 'd_2', latex: `d_2=${targetMatrix[1][1]}` });
+  }, [targetMatrix])
   
     return (
       <div
