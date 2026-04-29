@@ -14,7 +14,9 @@ interface GameState {
   matrixLibary: Card[],
   // Puzzles solved
   taskCompletion: Record<number, number>,
+  incrementTask: (task:number) => void,
   tasksUnlocked: Record<number, boolean>,
+  unlockTask: (task:number) => void,
   // On the right side of the = 
   targetCard : Card,
   setTargetCard: (card:Card) => void;
@@ -35,8 +37,17 @@ export const useGameState = create<GameState>((set) => ({
   fixedLHS : [],
   setFixedLHS: (cards) => set({fixedLHS: cards}),
   taskCompletion: defaultTaskCompletion(),
+  incrementTask: (task:number) => set((state) => ({
+    taskCompletion: {
+      ...state.taskCompletion,
+      [task]: state.taskCompletion[task] + 1,
+    },
+  })),
   matrixLibary: [],
   tasksUnlocked: defaultTasksUnlocked(),
+  unlockTask: (task:number) => set(state => ({
+    tasksUnlocked: {...state.tasksUnlocked, [task]: true}
+  })),
   currentTask: 0,
   setCurrentTask: (task: number) => set({currentTask:task}),
   seed: 0,

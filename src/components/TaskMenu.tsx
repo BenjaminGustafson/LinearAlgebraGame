@@ -2,22 +2,23 @@ import { TASK_LIST } from "../data/tasks";
 import { useUIState } from "../stores/UIState";
 import { useGameState } from "../stores/GameState";
 
-export default function TaskMenu() {
+export function TaskMenu() {
     const taskMenuOpen = useUIState((state) => state.taskMenuOpen);
     const toggleTaskMenu = useUIState(state => state.toggleTaskMenu)
+    const currentTask = useGameState(state => state.currentTask)
     const setCurrentTask = useGameState((state) => state.setCurrentTask);
     const tasksUnlocked = useGameState((state) => state.tasksUnlocked);
     const taskCompletion = useGameState((state) => state.taskCompletion);
     const seed = useGameState(state => state.seed)
 
     const handleTaskClick = (index: number) => {
-        if (!tasksUnlocked[index]) return;
+        toggleTaskMenu()
+        if (currentTask == index) return;
         setCurrentTask(index);
         const task = TASK_LIST[index];
         if (task.loadTask) {
             task.loadTask(seed);
         }
-        toggleTaskMenu()
     };
 
     return (
@@ -29,6 +30,8 @@ export default function TaskMenu() {
                 <p style={{ fontSize: 24, fontWeight: "bold", padding: "12px 16px" }}>Tasks</p>
                 {TASK_LIST.map((task, index) => {
                     const isLocked = !tasksUnlocked[index];
+                    const bgColor = isLocked ? "#aaa" : (currentTask == index) ? "#bbb" : "transparent"
+                    const hoverColor = "#b0b8c1"
                     return (
                         <div
                             key={index}
@@ -42,14 +45,14 @@ export default function TaskMenu() {
                                 fontSize: 22,
                                 cursor: isLocked ? "default" : "pointer",
                                 color: isLocked ? "#888" : "inherit",
-                                backgroundColor: isLocked ? "#aaa" : "transparent",
+                                backgroundColor: bgColor,
                                 transition: "background-color 0.15s",
                             }}
                             onMouseEnter={(e) => {
-                                if (!isLocked) e.currentTarget.style.backgroundColor = "#b0b8c1";
+                                if (!isLocked) e.currentTarget.style.backgroundColor = hoverColor;
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = isLocked ? "#aaa" : "transparent";
+                                e.currentTarget.style.backgroundColor = bgColor;
                             }}
                         >
                             <span>{index + 1}</span>
@@ -70,4 +73,12 @@ export default function TaskMenu() {
             </div>
         )
     );
+}
+
+export function checkTaskUnlocks(){
+    TASK_LIST.forEach((task, i) => {
+        if (!useGameState.getState().tasksUnlocked[i] && task.unlock && task.unlock()){
+            useGameState.getState().unlockTask(i)
+        }
+    })
 }

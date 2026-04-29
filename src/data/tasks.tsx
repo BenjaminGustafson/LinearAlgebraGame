@@ -40,13 +40,14 @@ export const TASK_LIST = [
     {
         title:"More Transformations",
         unlock: ()=>{
-            const taskCompletion = useGameState(state => state.taskCompletion)
-            return taskCompletion[1] >= 5
+            
+            return useGameState.getState().taskCompletion[1] >= 5
         },
         unlockText:"Complete task Simple Transformations 5 times"
     },
     {
         title:"Build a Matrix",
+        unlock: ()=>true,
         unlockText:"Complete task 2 (More transformations) 5 times"
     },
     {

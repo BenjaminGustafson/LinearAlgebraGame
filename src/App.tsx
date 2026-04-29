@@ -8,7 +8,7 @@ import { Hand } from './components/Hand';
 import MatrixBuilder from './components/MatrixBuilder';
 import { useGameState } from './stores/GameState';
 import { ToggleButton } from './components/ToggleButton';
-import TaskMenu from './components/TaskMenu';
+import {TaskMenu, checkTaskUnlocks} from './components/TaskMenu';
 import { TASK_LIST } from './data/tasks';
 
 function App() {
@@ -57,7 +57,7 @@ function App() {
       <button
         className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
         style={{ left: 100, top: 50, width: 150, height: 60, fontSize: 24 }}
-        onClick={() => { toggleTaskMenu() }}
+        onClick={() => { toggleTaskMenu(); checkTaskUnlocks() }}
       >
         Task List
       </button>
