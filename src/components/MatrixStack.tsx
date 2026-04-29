@@ -1,6 +1,7 @@
 import { useUIState, useStackProduct } from '../stores/UIState';
 import { CardComponent } from './Card';
 import { useGameState } from '../stores/GameState';
+import { useEffect } from 'react';
 
 /**
  * Stacks matrices from right to left (reverse of internal representation)
@@ -12,18 +13,25 @@ export function MatrixStack() {
   const showResultNotTarget = useUIState( state => state.showResultNotTarget)
   const resultCard = useStackProduct()
 
-  const cardGap = 180;
+  const maxGap = 180;
   const startX = 480;
-  const topY = 400;
+  var cardGap = Math.min(startX/(fixedLHS.length+stack.length), maxGap);
+  const topY = 300;
   const stackStartX = startX - cardGap * fixedLHS.length;
 
   targetCard.name = 'Target'
   resultCard.name = 'Result'
 
+  useEffect(() => {
+    cardGap = Math.min(startX/(fixedLHS.length+stack.length), maxGap);
+  }, [fixedLHS, stack])
+
+
   return (
     <>
-      {fixedLHS.map((card, i) => {
-        const x = startX - i * (cardGap);
+      {
+      fixedLHS.map((card, i) => {
+        const x = startX - i * (cardGap)
         return (
           <div
             style={{ position: 'absolute', left: x, top: topY }}
