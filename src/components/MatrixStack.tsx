@@ -15,7 +15,7 @@ function NextButton() {
         <button
       className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
       style={{ left: 800, top: 160, width: 150, height: 60, fontSize: 24 }}
-      onClick={() => { TASK_LIST[currentTask].loadTask(useGameState.getState().seed) }}
+      onClick={() => { TASK_LIST[currentTask].loadTask() }}
     >
       Next
     </button>

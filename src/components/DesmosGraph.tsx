@@ -18,9 +18,16 @@ export function DesmosGraph() {
       calculatorRef.current = Desmos.GraphingCalculator(containerRef.current, {
         keypad: false,
         expressions: false,
-        showGrid:false,
+        showGrid:false
       });
       const calculator = calculatorRef.current!;
+
+      calculator.setMathBounds({
+        left: -5,
+        right: 5,
+        bottom: -5,
+        top: 5
+      })
       // Based on https://www.desmos.com/calculator/yfeeqwkrhd
       //calculator.setExpression({ id: 'graph1', latex: 'y = x^2' });
       calculator.setExpression({ latex: 'n = 10' });
