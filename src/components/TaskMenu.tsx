@@ -2,6 +2,15 @@ import { TASK_LIST } from "../data/tasks";
 import { useUIState } from "../stores/UIState";
 import { useGameState } from "../stores/GameState";
 
+
+export function checkTaskUnlocks(){
+    TASK_LIST.forEach((task, i) => {
+        if (!useGameState.getState().tasksUnlocked[i] && task.unlock && task.unlock()){
+            useGameState.getState().unlockTask(i)
+        }
+    })
+}
+
 export function TaskMenu() {
     const taskMenuOpen = useUIState((state) => state.taskMenuOpen);
     const toggleTaskMenu = useUIState(state => state.toggleTaskMenu)
@@ -75,10 +84,3 @@ export function TaskMenu() {
     );
 }
 
-export function checkTaskUnlocks(){
-    TASK_LIST.forEach((task, i) => {
-        if (!useGameState.getState().tasksUnlocked[i] && task.unlock && task.unlock()){
-            useGameState.getState().unlockTask(i)
-        }
-    })
-}

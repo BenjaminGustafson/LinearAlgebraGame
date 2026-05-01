@@ -20,10 +20,15 @@ function App() {
   const toggleSimplify = useUIState(state => state.toggleSimplify);
   const toggleResultTarget = useUIState(state => state.toggleResultTarget);
   const toggleTaskMenu = useUIState(state => state.toggleTaskMenu)
-  const currentTask = useGameState(state => state.currentTask) 
+  const currentTask = useGameState(state => state.currentTask); 
+  const seed = useGameState(state => state.seed);
 
-  if (TASK_LIST[currentTask] && TASK_LIST[currentTask].loadTask)
-    TASK_LIST[currentTask].loadTask(Math.random())
+  useEffect(()=>{
+    if (TASK_LIST[currentTask] && TASK_LIST[currentTask].loadTask)
+      TASK_LIST[currentTask].loadTask(seed)
+  }, [])
+
+
 
   return (
     <ScaledGameContainer>
@@ -61,18 +66,21 @@ function App() {
       >
         Task List
       </button>
+      <span
+        className="absolute text-green"
+        style={{ left: 100, top: 20, fontSize: 24 }}
+      >
+        Current task : {currentTask+1}. {TASK_LIST[currentTask].title}
+      </span>
+      
       <div className="absolute"
         style={{ left: 250, top: 150 }}>
           <ToggleButton
             label="Simplify"
             onChange={ () => { toggleSimplify() }}
           />
-          <ToggleButton
-            label="Show result"
-            defaultEnabled={true}
-            onChange={ () => { toggleResultTarget() }}
-          />
       </div>
+
       <DesmosGraph />
       <MatrixBuilder/>
       <TaskMenu />
@@ -111,23 +119,5 @@ function ScaledGameContainer({ children }: { children: React.ReactNode }) {
   );
 }
 
-
-// Helper function to place absolute coords within app
-function Block({ x, y, w, h, x2, y2, className }: {
-  x: number; y: number;
-  w?: number; h?: number;
-  x2?: number; y2?: number;
-  className?: string
-}) {
-  const width = w ?? (x2! - x);
-  const height = h ?? (y2! - y);
-
-  return (
-    <div
-      className={`absolute ${className}`}
-      style={{ left: `${x * 100 / 1920}%`, top: `${y * 100 / 1080}%`, width: `${width * 100 / 1920}%`, height: `${height * 100 / 1080}%` }}
-    />
-  );
-}
 
 export default App;

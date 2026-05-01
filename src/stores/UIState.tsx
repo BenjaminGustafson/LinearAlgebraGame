@@ -1,11 +1,12 @@
 import type { Card } from '../components/Card';
-import { cardFromSimplified } from '../components/Card';
+import { cardFromSimplified, numericCard } from '../components/Card';
 import { create } from 'zustand';
 import { useMemo } from 'react';
 import type { Mat2 } from '../math/Matrix';
 import { multiplyMat2, id2 } from '../math/Matrix';
 import { useGameState } from './GameState';
 import { simplify } from '@cortex-js/compute-engine';
+import { useEffect } from 'react';
 
 // State for current UI
 export interface UIState {
@@ -13,6 +14,8 @@ export interface UIState {
   matrixStack: Card[];
   addCardToStack: (card: Card) => void;
   popStack: () => void;
+  stackProduct: Card;
+  setStackProduct: (card: Card) => void;
   // Matrix hand
   hand: Card[];
   addCardToHand: (card: Card) => void;
@@ -30,15 +33,23 @@ export interface UIState {
   taskMenuOpen: boolean;
   toggleTaskMenu: () => void;
   resetUIForNewTask: () => void;
+  taskSolved: boolean;
+  setTaskSolved: (solved:boolean) => void;
 }
 
+
+const identityCard = numericCard([[1,0],[0,1]], 'Identity')
+
 export const useUIState = create<UIState>((set) => ({
+  
   hand: [],
   matrixStack: [],
   matrixBuilderPanel: false,
   toggleMatrixBuilder: () => set((state) => ({ matrixBuilderPanel: !state.matrixBuilderPanel })),
   addCardToHand: (card) => set((state) => ({ hand: [...state.hand, card] })),
   addCardToStack: (card) => set((state) => ({ matrixStack: [...state.matrixStack, card] })),
+  stackProduct: identityCard,
+  setStackProduct: (card: Card) => set({ stackProduct: card }),
   playCard: (i) => set((state) => {
     const card = state.hand[i];
     if (!card) return state;
@@ -70,8 +81,11 @@ export const useUIState = create<UIState>((set) => ({
       matrixStack: [],
       matrixBuilderPanel: false,
       hand: [],
+      taskSolved: false,
     }
-  })
+  }),
+  taskSolved: false,
+  setTaskSolved: (solved:boolean) => set(state => ({taskSolved: solved})), 
 }));
 
 
@@ -102,8 +116,16 @@ export const useStackProduct = (): Card => {
   const matrixStack = useUIState((state) => state.matrixStack);
   const fixedLHS = useGameState(state => state.fixedLHS);
   const combinedStack = fixedLHS.concat(matrixStack);
-  return useMemo(
+  const setStackProduct = useUIState((state) => state.setStackProduct);
+
+  const result = useMemo(
     () => cardFromSimplified(multiplyExprMat2Stack(combinedStack.map(card => card.simplifiedMatrix))),
     [matrixStack, fixedLHS]
   );
+
+  useEffect(() => {
+    setStackProduct(result);
+  }, [result]);
+
+  return result;
 };

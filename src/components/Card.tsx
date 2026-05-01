@@ -24,6 +24,8 @@ export function numericCard(values: number[][], name:string = "") : Card {
   }
 }
 
+export const identityCard = numericCard([[1,0],[0,1]], 'Identity')
+
 /**
  * Create a card from an expression KNOWN TO BE VALID AND SIMPLIFIED
  */

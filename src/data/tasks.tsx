@@ -1,29 +1,90 @@
 import { numericCard } from "../components/Card"
 import { useGameState } from "../stores/GameState"
-import { useUIState } from "../stores/UIState"
+import { useStackProduct, useUIState } from "../stores/UIState"
 
+/**
+ * 
+ * @param seed float [0,1]
+ * @returns () => float [0,1]
+ */
 function randomNumberGenerator(seed: number): () => number {
+    var intSeed = Math.floor(seed * 0xFFFFFFFF)
+    console.log(seed, intSeed)
     return () => {
-        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-        let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+        intSeed |= 0; intSeed = intSeed + 0x6D2B79F5 | 0;
+        let t = Math.imul(intSeed ^ intSeed >>> 15, 1 | intSeed);
         t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
         return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
 }
 
-export const TASK_LIST = [
+
+
+/**
+ * Helper needed for newTaskSeed.
+ * Checks if two arrays have the same values.
+ */
+function arraysEqual(a: number[], b: number[]): boolean {
+    return a.length === b.length && a.every((val, i) => val === b[i])
+}
+
+/**
+ * Sets a new seed so that the puzzle will not be the same as the previous.
+ * Use this function rather than calling gameState.newSeed() directly.
+ */
+export function newPuzzle () {
+    const task = currentTask()
+    const old = task.useRNG()
+    var current
+    do {
+        useGameState.getState().newSeed()
+        current = task.useRNG()
+    } while (arraysEqual(old, current))
+}
+
+/**
+ * Shorthand function to get the current task
+ */
+export function currentTask() {
+    if (!TASK_LIST[useGameState.getState().currentTask])
+        return TASK_LIST[0]
+    return TASK_LIST[useGameState.getState().currentTask]
+}
+
+/**
+ * A task is a category of puzzle
+ */
+interface Task {
+    title:String,
+    unlock: () => boolean,
+    useRNG: () => number[],
+    loadTask: () => void,
+    checkSolution: () => boolean,
+    unlockText: string,
+}
+
+export const TASK_LIST : Task[] = [
     {
         title:"Simple Transformations",
         unlock: ()=>true,
-        loadTask: (seed: number) =>{
+        useRNG: () => {
+            const rng = randomNumberGenerator(useGameState.getState().seed)
+            return [Math.floor(rng()*4)]
+        },
+        loadTask: function () {
             const simpleTrans = [
                 numericCard([[2,0],[0,1]], "Scale x by 2"),
                 numericCard([[1,0],[0,2]], "Scale y by 2"),
                 numericCard([[1,1],[0,1]], "Skew x by 1 y"),
                 numericCard([[1,0],[1,1]], "Skew y by 1 x")
             ]
-            const generator = randomNumberGenerator(seed)
-            const target = numericCard(simpleTrans[Math.floor(generator()*simpleTrans.length)].matrix)
+            const i = this.useRNG()[0] 
+            const target = {
+                matrix: simpleTrans[i].matrix,
+                expressionMatrix: [['?','?'],['?','?']],
+                simplifiedMatrix: [['?','?'],['?','?']],
+                name:'Target'
+            }
             useGameState.getState().setTargetCard(target)
             useGameState.getState().setFixedLHS([])
             useUIState.getState().resetUIForNewTask()
@@ -34,8 +95,19 @@ export const TASK_LIST = [
             // Set the target to be hidden
         },
         checkSolution: ()=>{
-            // Check that matrix product = target
-        }
+            const result = useUIState.getState().stackProduct.matrix
+            const target = useGameState.getState().targetCard.matrix
+            let equal = true
+            for (let i = 0; i < result.length; i++){
+                for(let j = 0; j < result[i].length; j++){
+                    if (Math.abs(result[i][j]-target[i][j]) > 0.00001){
+                        equal = false
+                    }
+                }
+            }
+            return equal
+        },
+        unlockText: "",
     },
     {
         title:"More Transformations",
