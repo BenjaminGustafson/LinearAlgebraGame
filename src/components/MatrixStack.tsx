@@ -5,26 +5,29 @@ import { useEffect } from 'react';
 import { TASK_LIST, newPuzzle } from '../data/tasks';
 import { usePick } from '../stores/util';
 
-
 function NextButton() {
   const taskSolved = useUIState(state => state.taskSolved)
   const currentTask = useGameState(state => state.currentTask)
-
   return (
     <>
-        <button
-      className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
-      style={{ left: 800, top: 160, width: 150, height: 60, fontSize: 24 }}
-      onClick={() => { TASK_LIST[currentTask].loadTask() }}
-    >
-      Next
-    </button>
-    <span
-      className="absolute text-green"
-      style={{ left: 800, top: 260, width: 150, height: 60, fontSize: 24 }}
-    >
-      {taskSolved ? 'Solved!' : ''}
-    </span>
+      <button
+        className={`absolute text-white rounded-lg ${
+          taskSolved
+            ? 'bg-blue-600 hover:bg-blue-500'
+            : 'bg-gray-400'
+        }`}
+        style={{ left: 800, top: 160, width: 150, height: 60, fontSize: 24 }}
+        onClick={() => { if (taskSolved) TASK_LIST[currentTask].loadTask() }}
+        disabled={!taskSolved}
+      >
+        Next
+      </button>
+      <span
+        className="absolute"
+        style={{ left: 800, top: 240, width: 150, height: 60, fontSize: 32 }}
+      >
+        {taskSolved ? 'Solved!' : ''}
+      </span>
     </>
   )
 }
@@ -51,6 +54,7 @@ export function MatrixStack() {
   const currentTask = useGameState(state => state.currentTask); 
   const resultCard = useStackProduct()
   const newSeed = useGameState(state => state.newSeed)
+  const incrementTask = useGameState(state => state.incrementTask)
 
   const maxGap = 180;
   const startX = 480;
@@ -61,15 +65,16 @@ export function MatrixStack() {
   targetCard.name = 'Target'
   resultCard.name = 'Result'
 
+  
   useEffect(() => {
     cardGap = Math.min(startX/(fixedLHS.length+stack.length), maxGap);
+    
+    // Check if task is solved
     if (!taskSolved && TASK_LIST[currentTask]?.checkSolution 
         && TASK_LIST[currentTask].checkSolution()){
-      console.log('SOLVED!')
+      incrementTask(currentTask)
       setTaskSolved(true);
       newPuzzle()
-      console.log(useGameState.getState().seed)
-      //gameState.newSeed();
     }
     
   }, [fixedLHS, stack])

@@ -2,6 +2,7 @@ import type { Card } from "../components/Card";
 import { create } from 'zustand';
 import { numericCard } from "../components/Card";
 import { TASK_LIST } from "../data/tasks";
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 // State for 
 interface GameState {
@@ -31,7 +32,10 @@ const defaultTaskCompletion = (): Record<number, number> =>
 const defaultTasksUnlocked = (): Record<number, boolean> =>
   Object.fromEntries(TASK_LIST.map((_, i) => [i, i === 0]));
 
-export const useGameState = create<GameState>((set) => ({
+export const useGameState = create<GameState>()(
+  persist(
+    (set, get) => ({
+
   targetCard: numericCard([[1, 0], [0, 1]], 'Identity'),
   setTargetCard: (card:Card) => set({targetCard: card}),
   fixedLHS : [],
@@ -52,4 +56,10 @@ export const useGameState = create<GameState>((set) => ({
   setCurrentTask: (task: number) => set({currentTask:task}),
   seed: 0,
   newSeed: () => set({seed: Math.random()})
-}));
+
+  }),
+  {
+    name: 'game-state', // localStorage key
+    storage: createJSONStorage(() => localStorage),
+  }
+));

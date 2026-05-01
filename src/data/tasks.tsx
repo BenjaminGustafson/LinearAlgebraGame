@@ -63,6 +63,20 @@ interface Task {
     unlockText: string,
 }
 
+function resultEqualsTarget() {
+    const result = useUIState.getState().stackProduct.matrix
+    const target = useGameState.getState().targetCard.matrix
+    let equal = true
+    for (let i = 0; i < result.length; i++){
+        for(let j = 0; j < result[i].length; j++){
+            if (Math.abs(result[i][j]-target[i][j]) > 0.00001){
+                equal = false
+            }
+        }
+    }
+    return equal
+}
+
 export const TASK_LIST : Task[] = [
     {
         title:"Simple Transformations",
@@ -95,27 +109,47 @@ export const TASK_LIST : Task[] = [
             // Set the target to be hidden
         },
         checkSolution: ()=>{
-            const result = useUIState.getState().stackProduct.matrix
-            const target = useGameState.getState().targetCard.matrix
-            let equal = true
-            for (let i = 0; i < result.length; i++){
-                for(let j = 0; j < result[i].length; j++){
-                    if (Math.abs(result[i][j]-target[i][j]) > 0.00001){
-                        equal = false
-                    }
-                }
-            }
-            return equal
+            return resultEqualsTarget()
         },
         unlockText: "",
     },
     {
         title:"More Transformations",
         unlock: ()=>{
-            
             return useGameState.getState().taskCompletion[1] >= 5
         },
-        unlockText:"Complete task Simple Transformations 5 times"
+        unlockText:"Complete task Simple Transformations 5 times",
+        useRNG: () => {
+            const rng = randomNumberGenerator(useGameState.getState().seed)
+            return [Math.floor(rng()*8)]
+        },
+        loadTask: function () {
+            const cards = [
+                numericCard([[2,0],[0,1]], "Scale x by 2"),
+                numericCard([[1,0],[0,2]], "Scale y by 2"),
+                numericCard([[1,1],[0,1]], "Skew x by 1 y"),
+                numericCard([[1,0],[1,1]], "Skew y by 1 x"),
+                numericCard([[1/2,0],[0,1]], "Scale x by 1/2"),
+                numericCard([[1,0],[0,1/2]], "Scale y by 1/2"),
+                numericCard([[1,-1],[0,1]], "Skew x by -1 y"),
+                numericCard([[1,0],[-1,1]], "Skew y by -1 x"),
+            ]
+            const i = this.useRNG()[0] 
+            const target = {
+                matrix: cards[i].matrix,
+                expressionMatrix: [['?','?'],['?','?']],
+                simplifiedMatrix: [['?','?'],['?','?']],
+                name:'Target'
+            }
+            useGameState.getState().setTargetCard(target)
+            useGameState.getState().setFixedLHS([])
+            useUIState.getState().resetUIForNewTask()
+            const addCardToHand = useUIState.getState().addCardToHand
+            cards.forEach(card => addCardToHand(card))
+        },
+        checkSolution: ()=>{
+            return resultEqualsTarget()
+        },
     },
     {
         title:"Build a Matrix",
