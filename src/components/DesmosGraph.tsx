@@ -23,10 +23,10 @@ export function DesmosGraph() {
       const calculator = calculatorRef.current!;
 
       calculator.setMathBounds({
-        left: -5,
-        right: 5,
-        bottom: -5,
-        top: 5
+        left: -3,
+        right: 3,
+        bottom: -3,
+        top: 3
       })
       // Based on https://www.desmos.com/calculator/yfeeqwkrhd
       //calculator.setExpression({ id: 'graph1', latex: 'y = x^2' });

@@ -78,7 +78,7 @@ export function CardComponent({ card, hidden = false, fixed = false, color='#1e2
       backgroundColor: color, 
   }}
   className={`hover:bg-[#09121f] ${fixed ? "pointer-events-none" : ""}`}>
-    <span style={{ textAlign: 'center',  overflow: 'hidden', color: 'white', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={`\\text{${card.name ? card.name : ''}}`} /></span>
+    {/* <span style={{ textAlign: 'center',  overflow: 'hidden', color: 'white', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={`\\text{${card.name ? card.name : ''}}`} /></span> */}
 
       <div style={{
           display: 'grid',

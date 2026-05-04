@@ -44,7 +44,7 @@ export function TaskMenu() {
                     return (
                         <div
                             key={index}
-                            onClick={() => handleTaskClick(index)}
+                            onClick={() => {if (!isLocked) handleTaskClick(index)}}
                             style={{
                                 display: "grid",
                                 gridTemplateColumns: "80px 1fr 120px",
