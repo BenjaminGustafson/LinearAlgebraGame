@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { numericCard, type Card } from './components/Card';
-import type { Mat2 } from './math/Matrix';
 import { useUIState, useStackProduct } from './stores/UIState';
 import { DesmosGraph } from './components/DesmosGraph';
 import { MatrixStack } from './components/MatrixStack';

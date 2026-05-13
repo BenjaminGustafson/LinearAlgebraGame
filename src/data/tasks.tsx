@@ -1,4 +1,4 @@
-import { numericCard } from "../components/Card"
+import { numericCard, createCard } from "../types/Card"
 import { useGameState } from "../stores/GameState"
 import { useStackProduct, useUIState } from "../stores/UIState"
 
@@ -93,12 +93,13 @@ export const TASK_LIST : Task[] = [
                 numericCard([[1,0],[1,1]], "Skew y by 1 x")
             ]
             const i = this.useRNG()[0] 
-            const target = {
+            const target = createCard({
                 matrix: simpleTrans[i].matrix,
                 expressionMatrix: [['?','?'],['?','?']],
                 simplifiedMatrix: [['?','?'],['?','?']],
                 name:'Target'
-            }
+            })
+
             useGameState.getState().setTargetCard(target)
             useGameState.getState().setFixedLHS([])
             useUIState.getState().resetUIForNewTask()

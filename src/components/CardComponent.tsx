@@ -1,42 +1,8 @@
 import type { Mat2 } from '../math/Matrix.tsx'
 import { useEffect, useRef } from 'react';
-import { mathQuillPromise } from '../external/MathQuillLoader';
+import { mathQuillPromise } from '../external/MathQuillLoader.tsx';
 import { useUIState } from '../stores/UIState.tsx';
-import { ComputeEngine } from '@cortex-js/compute-engine';
-
-const ce = new ComputeEngine();
-
-export interface Card {
-  expressionMatrix: string[][];
-  simplifiedMatrix: string[][];
-  // substituted?
-  matrix: Mat2;
-  name: string,
-}
-
-export function numericCard(values: number[][], name:string = "") : Card {
-  const stringMat = values.map(row => row.map(String));
-  return {
-    expressionMatrix: stringMat,
-    simplifiedMatrix: stringMat,
-    matrix: values as Mat2,
-    name,
-  }
-}
-
-export const identityCard = numericCard([[1,0],[0,1]], 'Identity')
-
-/**
- * Create a card from an expression KNOWN TO BE VALID AND SIMPLIFIED
- */
-export function cardFromSimplified(expressions: string[][]): Card{
-
-  return {
-    expressionMatrix: expressions,
-    simplifiedMatrix: expressions,
-    matrix: expressions.map(row => row.map(e => ce.parse(e).numericValue)) as Mat2,
-  }
-}
+import type { Card } from '../types/Card.tsx'
 
 
 function StaticMath({ latex }: { latex: string }) {
@@ -57,6 +23,7 @@ function StaticMath({ latex }: { latex: string }) {
  * And be a square div
  * Later: dnd-kit
  */
+
 export function CardComponent({ card, hidden = false, fixed = false, color='#1e293b' }: { 
   card: Card, hidden:boolean, fixed:boolean, color:string
  }) {

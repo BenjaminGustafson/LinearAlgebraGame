@@ -1,6 +1,6 @@
-import type { Card } from "../components/Card";
+import type { Card } from '../types/Card.tsx'
 import { create } from 'zustand';
-import { numericCard } from "../components/Card";
+import { numericCard } from "../types/Card.tsx";
 import { TASK_LIST } from "../data/tasks";
 import { persist, createJSONStorage } from 'zustand/middleware'
 

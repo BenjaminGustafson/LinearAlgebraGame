@@ -1,5 +1,5 @@
 import { useUIState, useStackProduct } from '../stores/UIState';
-import { CardComponent } from './Card';
+import { CardComponent } from './CardComponent';
 import { useGameState } from '../stores/GameState';
 import { useEffect } from 'react';
 import { TASK_LIST, newPuzzle } from '../data/tasks';

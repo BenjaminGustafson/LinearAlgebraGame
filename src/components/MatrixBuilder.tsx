@@ -1,7 +1,7 @@
 import { useUIState } from '../stores/UIState';
 import { useEffect, useRef } from 'react';
-import { numericCard } from '../components/Card';
-import type { Card} from '../components/Card';
+import type { Card } from '../types/Card.tsx'
+import { createCard } from '../types/Card.tsx';
 import { ComputeEngine } from '@cortex-js/compute-engine';
 import type { Mat2 } from '../math/Matrix';
 import { mathQuillPromise } from '../external/MathQuillLoader';
@@ -89,7 +89,7 @@ export default function MatrixBuilder() {
                             row.map(cell => cell.simplified)
                         );
 
-                        addCardToHand({expressionMatrix, simplifiedMatrix, matrix});
+                        addCardToHand(createCard(expressionMatrix, simplifiedMatrix, matrix));
                         toggleMatrixBuilder()
                     }}
                 >Create</button>

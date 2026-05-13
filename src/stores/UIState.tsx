@@ -1,5 +1,5 @@
-import type { Card } from '../components/Card';
-import { cardFromSimplified, numericCard } from '../components/Card';
+import type { Card } from '../types/Card.tsx'
+import { cardFromSimplified, numericCard } from '../types/Card';
 import { create } from 'zustand';
 import { useMemo } from 'react';
 import type { Mat2 } from '../math/Matrix';
@@ -19,6 +19,7 @@ export interface UIState {
   // Matrix hand
   hand: Card[];
   addCardToHand: (card: Card) => void;
+  reorderHand: (from: number, to: number) => void;
   playCard: (i: number) => void;   // hand -> stack
   // Panels
   matrixBuilderPanel: boolean;
@@ -47,6 +48,12 @@ export const useUIState = create<UIState>((set) => ({
   matrixBuilderPanel: false,
   toggleMatrixBuilder: () => set((state) => ({ matrixBuilderPanel: !state.matrixBuilderPanel })),
   addCardToHand: (card) => set((state) => ({ hand: [...state.hand, card] })),
+  reorderHand: (from: number, to: number) => set(state => {
+    const hand = [...state.hand];
+    const [moved] = hand.splice(from, 1);
+    hand.splice(to, 0, moved);
+    return { hand };
+  }),
   addCardToStack: (card) => set((state) => ({ matrixStack: [...state.matrixStack, card] })),
   stackProduct: identityCard,
   setStackProduct: (card: Card) => set({ stackProduct: card }),

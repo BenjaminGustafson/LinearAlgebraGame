@@ -73,6 +73,10 @@ export function DesmosGraph() {
     const duration = 500; // ms
     const startTime = performance.now();
 
+    /**
+     * The animate function gets called recursively so that we don't 
+     * exit the useEffect until the animation is done. 
+     */
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const t = Math.min(elapsed / duration, 1);
@@ -86,6 +90,10 @@ export function DesmosGraph() {
       calculator.setExpression({ id: 'd', latex: `d=${lerp(oldTransform[1][1], newTransform[1][1])}` });
 
 
+      /**
+       * While t is in (0,1), we keep asking for frames to run
+       * the animate function again.
+       */
       if (t < 1) {
         requestAnimationFrame(animate);
       } else {
@@ -94,7 +102,7 @@ export function DesmosGraph() {
     };
   const frameId = requestAnimationFrame(animate);
   return () => cancelAnimationFrame(frameId);
-    }, [transform]);
+  }, [transform]);
 
   useEffect(() => {
     if (!containerRef.current) return;
