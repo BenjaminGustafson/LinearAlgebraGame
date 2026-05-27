@@ -1,13 +1,15 @@
+import { useUIState } from "../state";
 
-interface GameObjectProps {
+
+interface GameEntityProps {
   id: string;
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
 }
 
-function GameObject({ id, children, className, style }: GameObjectProps) {
-  const entity = useGameStore(state => state.entities[id]);
+function GameEntity({ id, children, className, style }: GameEntityProps) {
+  const entity = useUIState(state => state.entities[id]);
   if (!entity) return null;
 
   return (

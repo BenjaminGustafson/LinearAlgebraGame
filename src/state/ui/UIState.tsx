@@ -11,13 +11,14 @@ import { createHandSlice, type HandSlice } from './HandSlice.tsx';
 import { createStackSlice, type StackSlice } from './StackSlice.tsx';
 import { createOptionSlice, type OptionSlice } from './OptionSlice.tsx';
 import { createPanelSlice, type PanelSlice } from './PanelSlice.tsx';
+import { createEntitySlice, type EntitySlice } from './EntitySlice.tsx';
 
 import { useGameState } from '../game/GameState.tsx';
 
 /**
  * The state of the UI.
  */
-export type UIState = HandSlice & StackSlice & OptionSlice & PanelSlice & {
+export type UIState = HandSlice & StackSlice & OptionSlice & PanelSlice & EntitySlice & {
   scale: number;
   setScale: (scale: number) => void;  
   resetUIForNewTask: () => void;
@@ -28,10 +29,11 @@ export type UIState = HandSlice & StackSlice & OptionSlice & PanelSlice & {
 
 export const useUIState = create<UIState>()(
   immer((set, get, store) => ({
-    ...createHandSlice(set, get, store),
-    ...createStackSlice(set, get, store),
-    ...createOptionSlice(set, get, store),
-    ...createPanelSlice(set, get, store),
+    ...createHandSlice(set as any, get, store as any),
+    ...createStackSlice(set as any, get, store as any),
+    ...createOptionSlice(set as any, get, store as any),
+    ...createPanelSlice(set as any, get, store as any),
+    ...createEntitySlice(set as any, get, store as any),
     scale: 1,
     setScale: (scale) => set((state) => {
       state.scale = scale;
