@@ -1,6 +1,6 @@
 import { numericCard, createCard } from "../types/Card"
-import { useGameState } from "../stores/GameState"
-import { useStackProduct, useUIState } from "../stores/UIState"
+import { useGameState } from "../state/game/GameState"
+import { useStackProduct, useUIState } from "../state/ui/UIState"
 
 /**
  * 
@@ -77,6 +77,9 @@ function resultEqualsTarget() {
     return equal
 }
 
+/**
+ * TODO: just put these in separate files?
+ */
 export const TASK_LIST : Task[] = [
     {
         title:"Simple Transformations",

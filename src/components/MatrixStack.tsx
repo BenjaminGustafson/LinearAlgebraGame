@@ -1,9 +1,7 @@
-import { useUIState, useStackProduct } from '../stores/UIState';
 import { CardComponent } from './CardComponent';
-import { useGameState } from '../stores/GameState';
 import { useEffect } from 'react';
 import { TASK_LIST, newPuzzle } from '../data/tasks';
-import { usePick } from '../stores/util';
+import { usePick, useGameState, useUIState, useStackProduct } from '../state/';
 
 function NextButton() {
   const taskSolved = useUIState(state => state.taskSolved)

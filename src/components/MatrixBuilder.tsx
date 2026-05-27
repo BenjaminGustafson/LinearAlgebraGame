@@ -1,4 +1,4 @@
-import { useUIState } from '../stores/UIState';
+import { useUIState } from '../state/ui/UIState.tsx';
 import { useEffect, useRef } from 'react';
 import type { Card } from '../types/Card.tsx'
 import { createCard } from '../types/Card.tsx';

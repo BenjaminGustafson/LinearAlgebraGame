@@ -1,6 +1,10 @@
 import { useShallow } from 'zustand/react/shallow'
 import type { UseBoundStore, StoreApi } from 'zustand'
 
+// Export the two state stores
+export { useGameState } from './game/GameState';
+export { useUIState, useStackProduct } from './ui/UIState';
+
 /**
  * Reduces boilerplate of getting stuff from stores
  * Usage for Zustand store useMyStore:
@@ -8,3 +12,4 @@ import type { UseBoundStore, StoreApi } from 'zustand'
  */
 export const usePick = <T, K extends keyof T>(store: UseBoundStore<StoreApi<T>>, keys: K[]) =>
   store(useShallow((state) => Object.fromEntries(keys.map(k => [k, state[k]])) as Pick<T, K>));
+

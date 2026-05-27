@@ -1,6 +1,6 @@
 import { TASK_LIST } from "../data/tasks";
-import { useUIState } from "../stores/UIState";
-import { useGameState } from "../stores/GameState";
+import { useUIState } from "../state/ui/UIState";
+import { useGameState } from "../state/game/GameState";
 
 
 export function checkTaskUnlocks(){

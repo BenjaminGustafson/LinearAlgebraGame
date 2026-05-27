@@ -17,6 +17,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@tailwindcss/vite": "^4.2.1",
+    "immer": "^11.1.8",
     "jquery": "^4.0.0",
     "mathjs": "^15.2.0",
     "mathquill": "^0.10.1-a",

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useUIState, useStackProduct } from './stores/UIState';
+import { useUIState, useStackProduct } from './state/ui/UIState';
 import { DesmosGraph } from './components/DesmosGraph';
 import { MatrixStack } from './components/MatrixStack';
 import { Hand } from './components/Hand';
 import MatrixBuilder from './components/MatrixBuilder';
-import { useGameState } from './stores/GameState';
+import { useGameState } from './state/game/GameState';
 import { ToggleButton } from './components/ToggleButton';
 import {TaskMenu, checkTaskUnlocks} from './components/TaskMenu';
 import { TASK_LIST } from './data/tasks';
@@ -91,7 +91,8 @@ function App() {
  */
 function ScaledGameContainer({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  const scale = useUIState((state) => state.scale);
+  const setScale = useUIState((state) => state.setScale);
 
   useEffect(() => {
     const update = () => {

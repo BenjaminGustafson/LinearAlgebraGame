@@ -1,9 +1,7 @@
 declare const Desmos: any; 
 import { useEffect, useRef } from 'react';
 import type { Mat2 } from '../math/Matrix';
-import { useStackProduct } from '../stores/UIState';
-import { useGameState } from '../stores/GameState';
-
+import { useGameState, useStackProduct } from '../state'
 
 
 export function DesmosGraph() {

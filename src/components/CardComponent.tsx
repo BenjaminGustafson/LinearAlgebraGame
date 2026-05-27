@@ -1,7 +1,7 @@
 import type { Mat2 } from '../math/Matrix.tsx'
 import { useEffect, useRef } from 'react';
 import { mathQuillPromise } from '../external/MathQuillLoader.tsx';
-import { useUIState } from '../stores/UIState.tsx';
+import { useUIState } from '../state/ui/UIState.tsx';
 import type { Card } from '../types/Card.tsx'
 
 

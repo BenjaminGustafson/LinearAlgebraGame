@@ -1,0 +1,96 @@
+import type { Card } from '../../types/Card.tsx'
+import { cardFromSimplified, numericCard } from '../../types/Card.tsx';
+
+import { create } from 'zustand';
+import { immer } from 'zustand/middleware/immer';
+
+import { useMemo, useEffect } from 'react';
+import { simplify } from '@cortex-js/compute-engine';
+
+import { createHandSlice, type HandSlice } from './HandSlice.tsx';
+import { createStackSlice, type StackSlice } from './StackSlice.tsx';
+import { createOptionSlice, type OptionSlice } from './OptionSlice.tsx';
+import { createPanelSlice, type PanelSlice } from './PanelSlice.tsx';
+
+import { useGameState } from '../game/GameState.tsx';
+
+/**
+ * The state of the UI.
+ */
+export type UIState = HandSlice & StackSlice & OptionSlice & PanelSlice & {
+  scale: number;
+  setScale: (scale: number) => void;  
+  resetUIForNewTask: () => void;
+  taskSolved: boolean;
+  setTaskSolved: (solved:boolean) => void;
+}
+
+
+export const useUIState = create<UIState>()(
+  immer((set, get, store) => ({
+    ...createHandSlice(set, get, store),
+    ...createStackSlice(set, get, store),
+    ...createOptionSlice(set, get, store),
+    ...createPanelSlice(set, get, store),
+    scale: 1,
+    setScale: (scale) => set((state) => {
+      state.scale = scale;
+    }),
+    resetUIForNewTask: () => set((state) => {
+      state.matrixStack =  [];
+      state.matrixBuilderPanel = false
+      state.hand = [];
+      state.taskSolved = false;
+    }),
+    taskSolved: false,
+    setTaskSolved: (taskSolved:boolean) => set((state) => {
+      state.taskSolved = taskSolved
+    }), 
+  }))
+);
+
+
+/**
+ * Multiply the matrix stack
+ * Multiplies from left to right (stack is rendered in opposite direction)
+ * If stack is empty return identity
+ */
+export const useStackProduct = (): Card => {
+  const matrixStack = useUIState((state) => state.matrixStack);
+  const fixedLHS = useGameState(state => state.fixedLHS);
+  const combinedStack = fixedLHS.concat(matrixStack);
+  const setStackProduct = useUIState((state) => state.setStackProduct);
+
+  const result = useMemo(
+    () => cardFromSimplified(multiplyExprMat2Stack(combinedStack.map(card => card.simplifiedMatrix))),
+    [matrixStack, fixedLHS]
+  );
+
+  useEffect(() => {
+    setStackProduct(result);
+  }, [result]);
+
+  return result;
+};
+
+// Helpers for useStackProduct vvv
+
+export function multiplyExprMat2(a: string[][], b: string[][]): string[][] {
+  return [
+    [`(${a[0][0]})(${b[0][0]}) + (${a[0][1]})(${b[1][0]})`, `(${a[0][0]})(${b[0][1]}) + (${a[0][1]})(${b[1][1]})`],
+    [`(${a[1][0]})(${b[0][0]}) + (${a[1][1]})(${b[1][0]})`, `(${a[1][0]})(${b[0][1]}) + (${a[1][1]})(${b[1][1]})`],
+  ];
+}
+
+function simplifyMat2(m: string[][]): string[][] {
+  return m.map(row => row.map(cell => simplify(cell).latex));
+}
+
+export function multiplyExprMat2Stack(matrices: string[][][]): string[][] {
+  return matrices.reduce((acc, mat) =>
+    simplifyMat2(multiplyExprMat2(acc, mat)),
+    [['1', '0'], ['0', '1']]
+  );
+}
+
+// Helpers for useStackProduct ^^^

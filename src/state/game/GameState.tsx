@@ -1,7 +1,7 @@
-import type { Card } from '../types/Card.tsx'
+import type { Card } from '../../types/Card.tsx'
 import { create } from 'zustand';
-import { numericCard } from "../types/Card.tsx";
-import { TASK_LIST } from "../data/tasks";
+import { numericCard } from "../../types/Card.tsx";
+import { TASK_LIST } from "../../data/tasks.tsx";
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 // State for 
