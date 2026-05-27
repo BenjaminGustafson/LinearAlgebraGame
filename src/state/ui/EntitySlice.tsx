@@ -6,6 +6,7 @@ export interface EntityRecord {
   id: string;
   x: number;
   y: number;
+  rotation?:number;
   animation?: string;
 }
 
@@ -14,6 +15,7 @@ export interface EntitySlice {
   spawnEntity: (entity: EntityRecord) => void;
   despawnEntity: (id: string) => void;
   setPosition: (id: string, x: number, y: number) => void;
+  setRotation: (id: string, rotation: number) => void;
   setAnimation: (id: string, animation: string) => void;
   resetEntities: () => void;
 }
@@ -37,6 +39,12 @@ export const createEntitySlice: StateCreator <
     if (state.entities[id]) {
       state.entities[id].x = x;
       state.entities[id].y = y;
+    }
+  }),
+
+  setRotation: (id, rotation) => set((state) => {
+    if (state.entities[id]) {
+      state.entities[id].rotation = rotation;
     }
   }),
 
