@@ -106,8 +106,10 @@ export const TASK_LIST : Task[] = [
             useGameState.getState().setTargetCard(target)
             useGameState.getState().setFixedLHS([])
             useUIState.getState().resetUIForNewTask()
-            const addCardToHand = useUIState.getState().addCardToHand
-            simpleTrans.forEach(card => addCardToHand(card))
+            simpleTrans.forEach(card => {
+                useUIState.getState().spawnEntity({ id: 'card' + card.id, x: 0, y: 0 });
+                useUIState.getState().addCardToHand(card);
+            });
             // Set the matrix hand to 4 matrices
             // Make a random transformation from the 4 matrices
             // Set the target to be hidden

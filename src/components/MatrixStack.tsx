@@ -60,9 +60,8 @@ export function MatrixStack() {
   const topY = 300;
   const stackStartX = startX - cardGap * fixedLHS.length;
 
-  targetCard.name = 'Target'
-  resultCard.name = 'Result'
-
+  // targetCard.name = 'Target'
+  // resultCard.name = 'Result'
   
   useEffect(() => {
     cardGap = Math.min(startX/(fixedLHS.length+stack.length), maxGap);

@@ -8,7 +8,7 @@ interface GameEntityProps {
   style?: React.CSSProperties;
 }
 
-function GameEntity({ id, children, className, style }: GameEntityProps) {
+export function GameEntity({ id, children, className, style }: GameEntityProps) {
   const entity = useUIState(state => state.entities[id]);
   if (!entity) return null;
 
