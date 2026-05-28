@@ -19,6 +19,7 @@ export function GameEntity({ id, children, className, style }: GameEntityProps) 
         left: entity.x,
         top: entity.y,
         transform: entity.rotation ? `rotate(${entity.rotation}deg)` : undefined,
+        zIndex: entity.zIndex ?? 0,
         ...style, // allow overrides
       }}
       className={className}

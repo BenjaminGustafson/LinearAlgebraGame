@@ -57,26 +57,20 @@ export const useUIState = create<UIState>()(
  * Multiplies from left to right (stack is rendered in opposite direction)
  * If stack is empty return identity
  */
+export function getStackProduct(): Card {
+  const matrixStack = useUIState.getState().matrixStack;
+  const fixedLHS = useGameState.getState().fixedLHS;
+  const combinedStack = fixedLHS.concat(matrixStack);
+  return cardFromSimplified(multiplyExprMat2Stack(combinedStack.map(card => card.simplifiedMatrix)));
+}
+
 export const useStackProduct = (): Card => {
   const matrixStack = useUIState((state) => state.matrixStack);
   const fixedLHS = useGameState(state => state.fixedLHS);
-  const combinedStack = fixedLHS.concat(matrixStack);
-  const setStackProduct = useUIState((state) => state.setStackProduct);
-
-  const result = useMemo(
-    () => cardFromSimplified(multiplyExprMat2Stack(combinedStack.map(card => card.simplifiedMatrix))),
-    [matrixStack, fixedLHS]
-  );
-
-  useEffect(() => {
-    setStackProduct(result);
-  }, [result]);
-
-  return result;
-};
+  return useMemo(getStackProduct, [matrixStack, fixedLHS]);
+}
 
 // Helpers for useStackProduct vvv
-
 export function multiplyExprMat2(a: string[][], b: string[][]): string[][] {
   return [
     [`(${a[0][0]})(${b[0][0]}) + (${a[0][1]})(${b[1][0]})`, `(${a[0][0]})(${b[0][1]}) + (${a[0][1]})(${b[1][1]})`],

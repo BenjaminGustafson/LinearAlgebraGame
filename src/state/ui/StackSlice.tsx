@@ -3,6 +3,7 @@ import { type StateCreator } from "zustand";
 import { numericCard } from '../../types/Card';
 import { immer } from 'zustand/middleware/immer'; // do not delete this import
 import { type HandSlice } from "./HandSlice";
+import { type EntitySlice } from "./EntitySlice";
 
 export type StackSlice = {
   matrixStack: Card[];
@@ -16,7 +17,7 @@ const createIdentityCard = () => numericCard([[1,0],[0,1]], 'Identity')
 
 
 export const createStackSlice: StateCreator <
-  HandSlice & StackSlice,
+  HandSlice & StackSlice & EntitySlice,
   [['zustand/immer', never]],
   [],
   StackSlice

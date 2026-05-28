@@ -17,6 +17,10 @@ export function tweenPosition(id: string, toX: number, toY: number, duration: nu
       startY 
       + (toY - startY) * eased,
     );
+    useUIState.getState().setZIndex(
+      id,
+      100
+    );
   }
 
   animationQueue.enqueue({

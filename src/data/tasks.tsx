@@ -1,6 +1,6 @@
 import { numericCard, createCard } from "../types/Card"
 import { useGameState } from "../state/game/GameState"
-import { useStackProduct, useUIState } from "../state/ui/UIState"
+import { getStackProduct, useStackProduct, useUIState } from "../state/ui/UIState"
 
 /**
  * 
@@ -103,9 +103,11 @@ export const TASK_LIST : Task[] = [
                 name:'Target'
             })
 
+            useUIState.getState().resetUIForNewTask()
+            useUIState.getState().spawnEntity({ id: 'card' + target.id, x: 0, y: 0 })
             useGameState.getState().setTargetCard(target)
             useGameState.getState().setFixedLHS([])
-            useUIState.getState().resetUIForNewTask()
+            getStackProduct()
             simpleTrans.forEach(card => {
                 useUIState.getState().spawnEntity({ id: 'card' + card.id, x: 0, y: 0 });
                 useUIState.getState().addCardToHand(card);

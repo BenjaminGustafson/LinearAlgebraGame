@@ -3,6 +3,7 @@ import { CardComponent } from './CardComponent.tsx';
 import type { Card } from '../types/Card.tsx'
 import { useState, useMemo, useEffect } from 'react';
 import { animationQueue, tweenPosition } from '../animation'
+import { DraggableCard } from './DraggableCard.tsx';
 
 /**
  * Sets the position of the cards in the hand 
@@ -44,8 +45,8 @@ export function Hand() {
 
   return (
     <>
-      {hand.map(card => (
-        <CardComponent key={card.id} card={card} />
+      {hand.map((card,i) => (
+        <DraggableCard key={card.id} card={card} index={i} />
       ))}
     </>
   );

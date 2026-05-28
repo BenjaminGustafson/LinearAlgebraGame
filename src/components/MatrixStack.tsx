@@ -2,6 +2,7 @@ import { CardComponent } from './CardComponent';
 import { useEffect } from 'react';
 import { TASK_LIST, newPuzzle } from '../data/tasks';
 import { usePick, useGameState, useUIState, useStackProduct } from '../state/';
+import { tweenPosition } from '../animation';
 
 function NextButton() {
   const taskSolved = useUIState(state => state.taskSolved)
@@ -73,6 +74,18 @@ export function MatrixStack() {
       setTaskSolved(true);
       newPuzzle()
     }
+
+    stack.forEach((card, i) => {
+      const x = stackStartX - i * (cardGap);
+      tweenPosition('card' + card.id, x, topY, 300);
+    })
+
+    fixedLHS.forEach((card, i) => {
+      const x = startX - i * (cardGap);
+      tweenPosition('card' + card.id, x, topY, 300);
+    })
+
+
     
   }, [fixedLHS, stack])
 
@@ -82,24 +95,14 @@ export function MatrixStack() {
       <NextButton/>
       {
       fixedLHS.map((card, i) => {
-        const x = startX - i * (cardGap)
         return (
-          <div
-            style={{ position: 'absolute', left: x, top: topY }}
-          >
-            <CardComponent card={card} fixed />
-          </div>
+          <CardComponent card={card} fixed />
         );
       })}
 
       {stack.map((card, i) => {
-        const x = stackStartX - i * (cardGap);
         return (
-          <div
-            style={{ position: 'absolute', left: x, top: topY }}
-          >
             <CardComponent card={card} />
-          </div>
         );
       })}
 
