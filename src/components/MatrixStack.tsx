@@ -78,12 +78,12 @@ export function MatrixStack() {
 
     stack.forEach((card, i) => {
       const x = stackStartX - i * (cardGap);
-      tweenPosition(card.id, x, topY, 300);
+      tweenPosition({id: card.id, toX:x, toY:topY, duration:300});
     })
 
     fixedLHS.forEach((card, i) => {
       const x = startX - i * (cardGap);
-      tweenPosition(card.id, x, topY, 300);
+      tweenPosition({id: card.id, toX:x, toY:topY, duration:300});
     })
 
   }, [fixedLHS, stack])

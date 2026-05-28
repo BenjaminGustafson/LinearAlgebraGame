@@ -6,7 +6,7 @@ export interface EntityRecord {
   id: string;
   x: number;
   y: number;
-  rotation?:number;
+  rotation:number;
   zIndex?: number;
 }
 

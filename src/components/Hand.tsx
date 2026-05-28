@@ -37,9 +37,7 @@ export function Hand() {
       const x = startX + i * step;
       const y = startY + t * t * arcDepth;
       const rotation = t*maxRotation;
-      // instant for now, tween later
-      tweenPosition(card.id, x, y, 300);
-      useUIState.getState().setRotation(card.id, rotation)
+      tweenPosition({id:card.id, toX:x, toY:y, duration:300, toR: rotation});
     });
   }, [hand]);
 

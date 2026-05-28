@@ -13,6 +13,7 @@ export function DraggableCard({ card, index }: { card: Card; index: number }) {
 
     const startCardX = entity.x;
     const startCardY = entity.y;
+    const startCardR = entity.rotation;
     const startClientX = e.clientX;
     const startClientY = e.clientY;
 
@@ -36,7 +37,7 @@ export function DraggableCard({ card, index }: { card: Card; index: number }) {
       }
       // Return card to hand
       else {
-        tweenPosition(card.id, startCardX, startCardY, 200);
+        tweenPosition({id:card.id, toX:startCardX, toY:startCardY, toR:startCardR, duration:200});
       }
     };
 

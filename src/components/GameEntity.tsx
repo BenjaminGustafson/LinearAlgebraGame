@@ -1,14 +1,11 @@
 import { useUIState } from "../state";
 
-
-interface GameEntityProps {
+export function GameEntity({ id, children, className, style }: {
   id: string;
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
-}
-
-export function GameEntity({ id, children, className, style }: GameEntityProps) {
+}) {
   const entity = useUIState(state => state.entities[id]);
   if (!entity) return null;
 
@@ -18,7 +15,7 @@ export function GameEntity({ id, children, className, style }: GameEntityProps) 
         position: 'absolute',
         left: entity.x,
         top: entity.y,
-        transform: entity.rotation ? `rotate(${entity.rotation}deg)` : undefined,
+        transform: `rotate(${entity.rotation}deg)`,
         zIndex: entity.zIndex ?? 0,
         ...style, // allow overrides
       }}
