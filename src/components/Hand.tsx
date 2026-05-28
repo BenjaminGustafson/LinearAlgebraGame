@@ -38,8 +38,8 @@ export function Hand() {
       const y = startY + t * t * arcDepth;
       const rotation = t*maxRotation;
       // instant for now, tween later
-      tweenPosition('card' + card.id, x, y, 300);
-      useUIState.getState().setRotation('card' + card.id, rotation)
+      tweenPosition(card.id, x, y, 300);
+      useUIState.getState().setRotation(card.id, rotation)
     });
   }, [hand]);
 

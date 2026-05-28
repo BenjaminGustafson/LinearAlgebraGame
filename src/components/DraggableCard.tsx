@@ -8,7 +8,7 @@ export function DraggableCard({ card, index }: { card: Card; index: number }) {
 
   const onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
-    const entity = useUIState.getState().entities['card' + card.id];
+    const entity = useUIState.getState().entities[card.id];
     if (!entity) return;
 
     const startCardX = entity.x;
@@ -19,7 +19,8 @@ export function DraggableCard({ card, index }: { card: Card; index: number }) {
     const onMouseMove = (e: MouseEvent) => {
       const x = startCardX + (e.clientX - startClientX) / scale;
       const y = startCardY + (e.clientY - startClientY) / scale;
-      useUIState.getState().setPosition('card' + card.id, x, y);
+      useUIState.getState().setPosition(card.id, x, y);
+      useUIState.getState().setZIndex(card.id,1000);
     };
 
     const onMouseUp = (e: MouseEvent) => {
@@ -35,7 +36,7 @@ export function DraggableCard({ card, index }: { card: Card; index: number }) {
       }
       // Return card to hand
       else {
-        tweenPosition('card' + card.id, startCardX, startCardY, 200);
+        tweenPosition(card.id, startCardX, startCardY, 200);
       }
     };
 

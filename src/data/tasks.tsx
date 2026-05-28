@@ -104,12 +104,12 @@ export const TASK_LIST : Task[] = [
             })
 
             useUIState.getState().resetUIForNewTask()
-            useUIState.getState().spawnEntity({ id: 'card' + target.id, x: 0, y: 0 })
+            useUIState.getState().spawnEntity({ id: target.id, x: 0, y: 0 })
             useGameState.getState().setTargetCard(target)
             useGameState.getState().setFixedLHS([])
             getStackProduct()
             simpleTrans.forEach(card => {
-                useUIState.getState().spawnEntity({ id: 'card' + card.id, x: 0, y: 0 });
+                useUIState.getState().spawnEntity({ id: card.id, x: 0, y: 0 });
                 useUIState.getState().addCardToHand(card);
             });
             // Set the matrix hand to 4 matrices

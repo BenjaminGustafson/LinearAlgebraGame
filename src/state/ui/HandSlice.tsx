@@ -32,8 +32,8 @@ export const createHandSlice: StateCreator <
       console.warn('Invalid index in hand ', i)
       return
     };
-    state.hand.splice(i, 1);
     state.matrixStack.push(card);
+    state.hand.splice(i, 1);
   }),
 });
 

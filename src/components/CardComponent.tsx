@@ -32,7 +32,7 @@ export function CardComponent({ card, hidden = false, fixed = false, color='#1e2
   const [[a, b], [c, d]] = simplifyExpressions ? card.simplifiedMatrix : card.expressionMatrix;
 
   return (
-    <GameEntity id={'card'+card.id}>
+    <GameEntity id={card.id}>
     <div style={{
       width: 200,
       height: 200,
