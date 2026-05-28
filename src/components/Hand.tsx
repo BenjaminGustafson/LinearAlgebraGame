@@ -2,6 +2,7 @@ import { useUIState } from '../state/ui/UIState.tsx';
 import { CardComponent } from './CardComponent.tsx';
 import type { Card } from '../types/Card.tsx'
 import { useState, useMemo, useEffect } from 'react';
+import { animationQueue, tweenPosition } from '../animation'
 
 /**
  * Sets the position of the cards in the hand 
@@ -36,7 +37,7 @@ export function Hand() {
       const y = startY + t * t * arcDepth;
       const rotation = t*maxRotation;
       // instant for now, tween later
-      useUIState.getState().setPosition('card' + card.id, x, y);
+      tweenPosition('card' + card.id, x, y, 300);
       useUIState.getState().setRotation('card' + card.id, rotation)
     });
   }, [hand]);
