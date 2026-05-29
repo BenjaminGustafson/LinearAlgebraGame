@@ -81,12 +81,12 @@ export function MatrixStack() {
 
   // Spawn and position the result card
   useEffect(() => {
-    spawnCardEntity(resultCard, 840, 400);
+    spawnCardEntity(resultCard, 740, 300);
   }, [resultCard]);
 
   // Spawn and position the target card
   useEffect(() => {
-    spawnCardEntity(targetCard, 840, 650);
+    spawnCardEntity(targetCard, 740, 550);
   }, [targetCard]);
 
   const topStackCard = stack[stack.length - 1];

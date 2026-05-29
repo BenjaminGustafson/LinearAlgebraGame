@@ -6,9 +6,8 @@ export interface EntityRecord {
   id: string;
   x: number;
   y: number;
-  width: number;
-  height: number;
-  rotation?: number;
+  scale: number;
+  rotation: number;
   zIndex?: number;
 }
 
@@ -18,7 +17,7 @@ export interface EntitySlice {
   despawnEntity: (id: string) => void;
   setPosition: (id: string, x: number, y: number) => void;
   setRotation: (id: string, rotation: number) => void;
-  setSize: (id: string, width: number, height:number) => void;
+  setEntityScale: (id: string, scale:number) => void;
   setZIndex: (id: string, z: number) => void;
   resetEntities: () => void;
 }
@@ -57,10 +56,9 @@ export const createEntitySlice: StateCreator <
     }
   }),
 
-  setSize: (id, width, height) => set((state) => {
+  setEntityScale: (id, scale) => set((state) => {
     if (state.entities[id]) {
-      state.entities[id].width = width;
-      state.entities[id].height = height;
+      state.entities[id].scale = scale;
     }
   }),
 

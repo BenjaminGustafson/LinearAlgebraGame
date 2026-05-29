@@ -11,7 +11,7 @@ const MAX_HAND_WIDTH = 800;
 // Max distance btw cards
 const MAX_STEP = CARD_WIDTH - 8;
 // Dist btw cards
-const START_Y = 960;
+const START_Y = 860;
 // Maximum degrees of rotation 
 const MAX_ROTATION = 8;
 // Pixels of arc
@@ -21,7 +21,7 @@ const ARC_DEPTH = 20;
 function calcHandPosition (handLength: number){
   const step = handLength > 1 ? Math.min(MAX_STEP, MAX_HAND_WIDTH / (handLength - 1)) : 0;
   const totalWidth = handLength > 1 ? step * (handLength - 1) : CARD_WIDTH;
-  const startX = (1920 - totalWidth) / 2;
+  const startX = (1920 - totalWidth - CARD_WIDTH) / 2;
   return {step, startX}
 }
 

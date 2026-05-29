@@ -70,5 +70,5 @@ export function CardComponent({ card, hidden = false, fixed = false, color='#1e2
 
 
 export function spawnCardEntity(card:Card, x:number, y:number){
-  useUIState.getState().spawnEntity({ id: card.id, x, y, rotation: 0, width: CARD_WIDTH, height: CARD_WIDTH });
+  useUIState.getState().spawnEntity({ id: card.id, x, y, rotation: 0, scale: 1 });
 }

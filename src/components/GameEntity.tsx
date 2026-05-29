@@ -7,11 +7,9 @@ export function GameEntity({ id, children }: { id: string; children: React.React
   return (
     <div style={{
       position: 'absolute',
-      left: entity.x - entity.width / 2,
-      top: entity.y - entity.height / 2,
-      width: entity.width,
-      height: entity.height,
-      transform: entity.rotation ? `rotate(${entity.rotation}deg)` : undefined,
+      left: entity.x,
+      top: entity.y,
+      transform: `rotate(${entity.rotation}deg) scale(${entity.scale})`,
       zIndex: entity.zIndex ?? 0,
     }}>
       {children}

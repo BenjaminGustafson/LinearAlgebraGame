@@ -5,7 +5,8 @@ import { tweenPosition, animationHandler } from "../animation";
 import { GameEntity } from "./GameEntity";
 import { useState } from "react";
 import { type DropZone } from "../state/ui/HandSlice";
-
+import { useRef, useEffect } from "react";
+import { audioManager } from '../audio/AudioManager';
 
 /**
  * 
@@ -25,34 +26,44 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
   const insertCardToHand = useUIState(state => state.insertCardToHand)
   const setDraggedCardId = useUIState(state => state.setDraggedCardId)
   const entities = useUIState(state => state.entities)
-  const removeCardFromHand = useUIState(state => state.removeCardFromHand)
 
-  const [overStack, setOverStack] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null);
+  const mouseOverRef = useRef(false);
 
-  const [cardSize, setCardSize] = useState(CARD_WIDTH);
+  // Scale up cards on mouse over
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!cardRef.current) return;
 
-  const onMouseEnter = () => {
-    animationHandler.playAnimation({
-      duration: 100,
-      update: (t) => {
-        setCardSize(CARD_WIDTH * 1.25 * t);
+      const topElement = document.elementFromPoint(e.clientX, e.clientY);
+      const isOver = cardRef.current === topElement || cardRef.current.contains(topElement);
+
+      if (isOver && !mouseOverRef.current) {
+        mouseOverRef.current = true;
+        audioManager.play('click1', {pitch: 6*(Math.random()-0.5)})
+        
+        animationHandler.playAnimation({
+          duration: 100,
+          update: (t) => {
+            useUIState.getState().setEntityScale(card.id, 1 + 0.25 * t);
+          }
+        });
+        useUIState.getState().setZIndex(card.id, 1000);
+      } else if (!isOver && mouseOverRef.current) {
+        mouseOverRef.current = false;
+        animationHandler.playAnimation({
+          duration: 100,
+          update: (t) => {
+            useUIState.getState().setEntityScale(card.id, 1 + 0.25 * (1-t));
+          }
+        });
+        useUIState.getState().setZIndex(card.id, 100);
       }
-    });
-    useUIState.getState().setZIndex(card.id, 1000);
-  };
+    };
 
-  const onMouseLeave = () => {
-    animationHandler.playAnimation({
-      duration: 50,
-      update: (t) => {
-        setCardSize(CARD_WIDTH + CARD_WIDTH * 0.25 * (1 - t));
-      }
-    });
-    useUIState.getState().setZIndex(card.id, 0);
-  };
-
-
-  // mouse over brings card forward
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   const onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -115,8 +126,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
   return (
     <>
     <div onMouseDown={onMouseDown}
-         onMouseEnter={onMouseEnter}
-         onMouseLeave={onMouseLeave}
+         ref={cardRef}
          style={{ cursor: 'grab' }}
     >
       <CardComponent card={card} />
