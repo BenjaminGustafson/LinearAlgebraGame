@@ -11,7 +11,7 @@ const MAX_HAND_WIDTH = 800;
 // Max distance btw cards
 const MAX_STEP = CARD_WIDTH - 8;
 // Dist btw cards
-const START_Y = 860;
+const START_Y = 960;
 // Maximum degrees of rotation 
 const MAX_ROTATION = 8;
 // Pixels of arc
@@ -61,7 +61,7 @@ export function Hand() {
   return (
     <>
       {hand.map((card) => (
-        <DraggableCard key={card.id} card={card} />
+        <DraggableCard key={card.id} card={card} origin="hand" />
       ))}
     </>
   );

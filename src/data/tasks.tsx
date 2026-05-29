@@ -1,6 +1,7 @@
 import { numericCard, createCard } from "../types/Card"
 import { useGameState } from "../state/game/GameState"
 import { getStackProduct, useStackProduct, useUIState } from "../state/ui/UIState"
+import { spawnCardEntity } from "../components/CardComponent"
 
 /**
  * 
@@ -104,12 +105,12 @@ export const TASK_LIST : Task[] = [
             })
 
             useUIState.getState().resetUIForNewTask()
-            useUIState.getState().spawnEntity({ id: target.id, x: 0, y: 0, rotation:0 })
+            spawnCardEntity(target, 0,0)
             useGameState.getState().setTargetCard(target)
             useGameState.getState().setFixedLHS([])
             getStackProduct()
             simpleTrans.forEach(card => {
-                useUIState.getState().spawnEntity({ id: card.id, x: 0, y: 0, rotation:0 });
+                spawnCardEntity(card, 0,0)
                 useUIState.getState().addCardToHand(card);
             });
             // Set the matrix hand to 4 matrices

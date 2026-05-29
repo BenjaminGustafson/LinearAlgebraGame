@@ -1,4 +1,4 @@
-import { CardComponent } from './CardComponent';
+import { CardComponent, spawnCardEntity } from './CardComponent';
 import { useEffect } from 'react';
 import { TASK_LIST, newPuzzle } from '../data/tasks';
 import { usePick, useGameState, useUIState, useStackProduct } from '../state/';
@@ -32,100 +32,98 @@ function NextButton() {
   )
 }
 
-function PlayedStack() {
-
-}
-
-function FixedStack () {
-
-}
 
 /**
  * Stacks matrices from right to left (reverse of internal representation)
  */
 export function MatrixStack() {
-  //const gameState = usePick(useGameState, ['newSeed']);
-
   const stack = useUIState((state) => state.matrixStack);
-  const setTaskSolved = useUIState(state => state.setTaskSolved)
-  const taskSolved = useUIState(state => state.taskSolved)
+  const setTaskSolved = useUIState(state => state.setTaskSolved);
+  const taskSolved = useUIState(state => state.taskSolved);
   const targetCard = useGameState((state) => state.targetCard);
   const fixedLHS = useGameState(state => state.fixedLHS);
-  const currentTask = useGameState(state => state.currentTask); 
-  const resultCard = useStackProduct()
-  const newSeed = useGameState(state => state.newSeed)
-  const incrementTask = useGameState(state => state.incrementTask)
+  const currentTask = useGameState(state => state.currentTask);
+  const resultCard = useStackProduct();
+  const incrementTask = useGameState(state => state.incrementTask);
+  const dropZone = useUIState(state => state.dropZone);
 
+  // Max distance between cards
   const maxGap = 180;
+  // Rightmost x of the cards
   const startX = 480;
-  var cardGap = Math.min(startX/(fixedLHS.length+stack.length), maxGap);
+  // Y position of the stack
   const topY = 300;
-  const stackStartX = startX - cardGap * fixedLHS.length;
 
-  // targetCard.name = 'Target'
-  // resultCard.name = 'Result'
-  
+  // Position the stack cards
   useEffect(() => {
-    cardGap = Math.min(startX/(fixedLHS.length+stack.length), maxGap);
-    
-    // Check if task is solved
-    if (!taskSolved && TASK_LIST[currentTask]?.checkSolution 
-        && TASK_LIST[currentTask].checkSolution()){
-      incrementTask(currentTask)
+    if (!taskSolved && TASK_LIST[currentTask]?.checkSolution
+      && TASK_LIST[currentTask].checkSolution()) {
+      incrementTask(currentTask);
       setTaskSolved(true);
-      newPuzzle()
+      newPuzzle();
     }
+    // Distance between cards
+    const cardGap = Math.min(startX / (fixedLHS.length + stack.length || 1), maxGap);
+    // Rightmost x of the stack cards
+    const stackStartX = startX - cardGap * fixedLHS.length;
 
     stack.forEach((card, i) => {
-      const x = stackStartX - i * (cardGap);
       animationHandler.playAnimation(
-        tweenPosition({id: card.id, toX:x, toY:topY, duration:300}));
-    })
-
+        tweenPosition({ id: card.id, toX: stackStartX - i * cardGap, toY: topY, duration: 300 })
+      );
+    });
     fixedLHS.forEach((card, i) => {
-      const x = startX - i * (cardGap);
       animationHandler.playAnimation(
-        tweenPosition({id: card.id, toX:x, toY:topY, duration:300}));
-    })
+        tweenPosition({ id: card.id, toX: startX - i * cardGap, toY: topY, duration: 300 })
+      );
+    });
+  }, [fixedLHS, stack]);
 
-  }, [fixedLHS, stack])
-
+  // Spawn and position the result card
   useEffect(() => {
-    useUIState.getState().spawnEntity({id: resultCard.id, x:740, y:300, rotation:0})
-  }, [resultCard])
+    spawnCardEntity(resultCard, 840, 400);
+  }, [resultCard]);
 
+  // Spawn and position the target card
+  useEffect(() => {
+    spawnCardEntity(targetCard, 840, 650);
+  }, [targetCard]);
 
+  const topStackCard = stack[stack.length - 1];
 
   return (
     <>
-      <NextButton/>
-      {
-      fixedLHS.map((card, i) => {
-        return (
-          <CardComponent card={card} fixed />
-        );
-      })}
+      <NextButton />
 
-      {stack.map((card, i) => {
-        return (
-            <DraggableCard key={card.id} card={card} />
-        );
-      })}
+      {/* Drop zone */}
+      <div style={{
+        position: 'absolute',
+        left: 0, top: 300, width: 500, height: 200,
+        backgroundColor: dropZone == 'stack' ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
+        borderRadius: 12,
+        transition: 'background-color 0.1s',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Stack of cards */}
+      {fixedLHS.map((card) => (
+        <CardComponent key={card.id} card={card} fixed />
+      ))}
+
+      {stack.map((card) => (
+        card.id === topStackCard?.id
+          ? <DraggableCard key={card.id} card={card} origin="stack" />
+          : <CardComponent key={card.id} card={card} fixed />
+      ))}
 
       {/* Equals sign */}
-      <div
-      style={{ position: 'absolute', left: 680, top: topY+30 }}
-      >
-      <p className='text-[80px]'>=</p>
+      <div style={{ position: 'absolute', left: 680, top: topY + 30 }}>
+        <p className='text-[80px]'>=</p>
       </div>
-      {/* Result card */}
-      <CardComponent card={resultCard} color='#5850b5' fixed/>
-      {/* Target card */}
-      <div
-        style={{ position: 'absolute', left: 740, top: topY+250 }}
-      >
-        <CardComponent card={targetCard} color='#b32d41' fixed/>
-      </div>
+
+      {/* Result and target */}
+      <CardComponent card={resultCard} color='#5850b5' fixed />
+      <CardComponent card={targetCard} color='#b32d41' fixed />
     </>
   );
 }

@@ -6,16 +6,26 @@ import { immer } from 'zustand/middleware/immer'; // do not delete this import
 
 /**
  * Could combine this with stack slice to make card slice
+ * 
+ * OR put drag and drop in its own slice
  */
+
+// Not a very extensible way to do this...
+// But its probably fine for a custom dnd system with few zones
+export type DropZone = 'stack' | 'hand';
+
 export type HandSlice = {
   hand: Card[];
   addCardToHand: (card: Card) => void;
   reorderHand: (from: number, to: number) => void;
   playCard: (card: Card) => void;   // hand -> stack
   insertCardToHand: (card: Card, i:number) => void;
+  // Drag and drop
   draggedCardId: string|null;
   setDraggedCardId: (id:string|null) => void;
   removeCardFromHand: (card: Card) => void;
+  dropZone: DropZone|null;
+  setDropZone: (zone: DropZone) => void;
 }
 
 
@@ -61,6 +71,10 @@ export const createHandSlice: StateCreator <
   draggedCardId: null,
   setDraggedCardId: (id) => set(state => {
     state.draggedCardId = id
-  })
+  }),
+  dropZone: null,
+  setDropZone: (zone) => set(state => {
+    state.dropZone = zone;
+  }),
 });
 

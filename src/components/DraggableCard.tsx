@@ -1,9 +1,11 @@
-import { CardComponent } from "./CardComponent";
+import { CardComponent, CARD_WIDTH } from "./CardComponent";
 import { type Card } from "../types/Card";
 import { useUIState } from "../state";
 import { tweenPosition, animationHandler } from "../animation";
 import { GameEntity } from "./GameEntity";
 import { useState } from "react";
+import { type DropZone } from "../state/ui/HandSlice";
+
 
 /**
  * 
@@ -17,7 +19,7 @@ import { useState } from "react";
  * - 
  * 
  */
-export function DraggableCard({ card }: { card: Card }) {
+export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }) {
   const scale = useUIState(state => state.scale);
   const hand = useUIState(state => state.hand)
   const insertCardToHand = useUIState(state => state.insertCardToHand)
@@ -26,6 +28,29 @@ export function DraggableCard({ card }: { card: Card }) {
   const removeCardFromHand = useUIState(state => state.removeCardFromHand)
 
   const [overStack, setOverStack] = useState(false)
+
+  const [cardSize, setCardSize] = useState(CARD_WIDTH);
+
+  const onMouseEnter = () => {
+    animationHandler.playAnimation({
+      duration: 100,
+      update: (t) => {
+        setCardSize(CARD_WIDTH * 1.25 * t);
+      }
+    });
+    useUIState.getState().setZIndex(card.id, 1000);
+  };
+
+  const onMouseLeave = () => {
+    animationHandler.playAnimation({
+      duration: 50,
+      update: (t) => {
+        setCardSize(CARD_WIDTH + CARD_WIDTH * 0.25 * (1 - t));
+      }
+    });
+    useUIState.getState().setZIndex(card.id, 0);
+  };
+
 
   // mouse over brings card forward
 
@@ -89,7 +114,11 @@ export function DraggableCard({ card }: { card: Card }) {
 
   return (
     <>
-    <div onMouseDown={onMouseDown} style={{ cursor: 'grab' }}>
+    <div onMouseDown={onMouseDown}
+         onMouseEnter={onMouseEnter}
+         onMouseLeave={onMouseLeave}
+         style={{ cursor: 'grab' }}
+    >
       <CardComponent card={card} />
     </div>
     </>

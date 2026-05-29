@@ -25,7 +25,6 @@ function StaticMath({ latex }: { latex: string }) {
  * And be a square div
  * Later: dnd-kit
  */
-
 export function CardComponent({ card, hidden = false, fixed = false, color='#1e293b' }: { 
   card: Card, hidden?:boolean, fixed?:boolean, color?:string
  }) {
@@ -69,3 +68,7 @@ export function CardComponent({ card, hidden = false, fixed = false, color='#1e2
   );
 }
 
+
+export function spawnCardEntity(card:Card, x:number, y:number){
+  useUIState.getState().spawnEntity({ id: card.id, x, y, rotation: 0, width: CARD_WIDTH, height: CARD_WIDTH });
+}
