@@ -2,49 +2,66 @@ import { useUIState } from '../state/ui/UIState.tsx';
 import { CardComponent } from './CardComponent.tsx';
 import type { Card } from '../types/Card.tsx'
 import { useState, useMemo, useEffect } from 'react';
-import { animationQueue, tweenPosition } from '../animation'
+import { tweenPosition, animationHandler } from '../animation'
 import { DraggableCard } from './DraggableCard.tsx';
+import { CARD_WIDTH } from './CardComponent.tsx';
+
+// Max space for the hand
+const MAX_HAND_WIDTH = 800;
+// Max distance btw cards
+const MAX_STEP = CARD_WIDTH - 8;
+// Dist btw cards
+const START_Y = 860;
+// Maximum degrees of rotation 
+const MAX_ROTATION = 8;
+// Pixels of arc
+const ARC_DEPTH = 20;
+
+
+function calcHandPosition (handLength: number){
+  const step = handLength > 1 ? Math.min(MAX_STEP, MAX_HAND_WIDTH / (handLength - 1)) : 0;
+  const totalWidth = handLength > 1 ? step * (handLength - 1) : CARD_WIDTH;
+  const startX = (1920 - totalWidth) / 2;
+  return {step, startX}
+}
+
+export function positionInHand(index: number, handLength: number) {
+  const {step, startX} = calcHandPosition(handLength)
+  const centerIndex = (handLength - 1) / 2;
+  const t = handLength > 1 ? (index - centerIndex) / centerIndex : 0;
+
+  return {
+    x: startX + index * step,
+    y: START_Y + t * t * ARC_DEPTH,
+    rotation: t * MAX_ROTATION,
+  };
+}
+
+export function handIndexFromX(x: number, handLength: number): number {
+  const {step, startX} = calcHandPosition(handLength)
+
+  return Math.max(0, Math.min(handLength - 1, Math.round((x - startX) / step)));
+}
 
 /**
  * Sets the position of the cards in the hand 
  */
 export function Hand() {
   const hand = useUIState((state) => state.hand);
-
-  const cardWidth = 200;
-  // Max space for the hand
-  const maxWidth = 800;
-  // Max distance btw cards
-  const maxStep = cardWidth - 8;
-  // Dist btw cards
-  const step = hand.length > 1 ? Math.min(maxStep, maxWidth / (hand.length - 1)) : 0;
-  // Actual width of hand
-  const totalWidth = hand.length > 1 ? step * (hand.length - 1) : cardWidth;
-  // Position hand in middle of screen
-  const startX = (1920 - totalWidth) / 2;
-  const startY = 860;
-  // Maximum degree of rotation 
-  const maxRotation = 8;
-  // Pixels of arc
-  const arcDepth = 20;
-  
+  const draggedCardId = useUIState((state) => state.draggedCardId);
 
   useEffect(() => {
     hand.forEach((card, i) => {
-      const centerIndex = (hand.length-1) / 2;
-      // parameter t in [-1,1] with t=0 at centerIndex
-      const t = hand.length > 1 ? (i - centerIndex) / centerIndex : 0;
-      const x = startX + i * step;
-      const y = startY + t * t * arcDepth;
-      const rotation = t*maxRotation;
-      tweenPosition({id:card.id, toX:x, toY:y, duration:300, toR: rotation});
+      if (card.id === draggedCardId) return;
+      const { x, y, rotation } = positionInHand(i, hand.length);
+      animationHandler.playAnimation(tweenPosition({ id: card.id, toX: x, toY: y, duration: 100, toR: rotation }));
     });
   }, [hand]);
 
   return (
     <>
-      {hand.map((card,i) => (
-        <DraggableCard key={card.id} card={card} index={i} />
+      {hand.map((card) => (
+        <DraggableCard key={card.id} card={card} />
       ))}
     </>
   );

@@ -5,6 +5,7 @@ import { useUIState } from '../state/ui/UIState.tsx';
 import type { Card } from '../types/Card.tsx'
 import { GameEntity } from './GameEntity.tsx';
 
+export const CARD_WIDTH = 200;
 
 function StaticMath({ latex }: { latex: string }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -34,8 +35,8 @@ export function CardComponent({ card, hidden = false, fixed = false, color='#1e2
   return (
     <GameEntity id={card.id}>
     <div style={{
-      width: 200,
-      height: 200,
+      width: CARD_WIDTH,
+      height: CARD_WIDTH,
       border: '1px solid #334155',
       borderRadius: 12,
       display: 'flex',

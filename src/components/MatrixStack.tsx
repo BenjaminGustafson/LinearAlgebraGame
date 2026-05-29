@@ -2,7 +2,7 @@ import { CardComponent } from './CardComponent';
 import { useEffect } from 'react';
 import { TASK_LIST, newPuzzle } from '../data/tasks';
 import { usePick, useGameState, useUIState, useStackProduct } from '../state/';
-import { tweenPosition } from '../animation';
+import { tweenPosition, animationHandler } from '../animation';
 import { DraggableCard } from './DraggableCard';
 
 function NextButton() {
@@ -78,15 +78,22 @@ export function MatrixStack() {
 
     stack.forEach((card, i) => {
       const x = stackStartX - i * (cardGap);
-      tweenPosition({id: card.id, toX:x, toY:topY, duration:300});
+      animationHandler.playAnimation(
+        tweenPosition({id: card.id, toX:x, toY:topY, duration:300}));
     })
 
     fixedLHS.forEach((card, i) => {
       const x = startX - i * (cardGap);
-      tweenPosition({id: card.id, toX:x, toY:topY, duration:300});
+      animationHandler.playAnimation(
+        tweenPosition({id: card.id, toX:x, toY:topY, duration:300}));
     })
 
   }, [fixedLHS, stack])
+
+  useEffect(() => {
+    useUIState.getState().spawnEntity({id: resultCard.id, x:740, y:300, rotation:0})
+  }, [resultCard])
+
 
 
   return (
@@ -101,7 +108,7 @@ export function MatrixStack() {
 
       {stack.map((card, i) => {
         return (
-            <DraggableCard key={card.id} card={card} index={i} />
+            <DraggableCard key={card.id} card={card} />
         );
       })}
 
@@ -112,11 +119,7 @@ export function MatrixStack() {
       <p className='text-[80px]'>=</p>
       </div>
       {/* Result card */}
-      <div
-        style={{ position: 'absolute', left: 740, top: topY }}
-      >
-        <CardComponent card={resultCard} color='#5850b5' fixed/>
-      </div>
+      <CardComponent card={resultCard} color='#5850b5' fixed/>
       {/* Target card */}
       <div
         style={{ position: 'absolute', left: 740, top: topY+250 }}

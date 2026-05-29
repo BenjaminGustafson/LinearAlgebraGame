@@ -1,12 +1,12 @@
 import { useUIState } from "../state";
-import { animationQueue } from "./AnimationQueue";
+import { type Animation, animationHandler } from "./AnimationHandler";
 
 
 export function tweenPosition({id, toX, toY, duration, toR=0}:
   {id: string, toX: number, toY: number, duration: number, toR?:number}
-): void {
+): Animation {
   const entity = useUIState.getState().entities[id];
-  if (!entity) return
+  if (!entity) return {duration: 0, update: ()=>{}}
     
   const startX = entity.x;
   const startY = entity.y;
@@ -29,8 +29,8 @@ export function tweenPosition({id, toX, toY, duration, toR=0}:
     );
   }
 
-  animationQueue.enqueue({
+  return {
     duration,
     update
-  })
+  }
 }

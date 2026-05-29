@@ -1,2 +1,2 @@
 export { tweenPosition } from "./Tween";
-export { animationQueue } from "./AnimationQueue";
+export { animationHandler } from "./AnimationHandler";
