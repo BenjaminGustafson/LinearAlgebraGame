@@ -48,6 +48,7 @@ export function handIndexFromX(x: number, handLength: number): number {
  */
 export function Hand() {
   const hand = useUIState((state) => state.hand);
+  const handLayout = useUIState((state) => state.handLayout)
   const draggedCardId = useUIState((state) => state.draggedCardId);
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export function Hand() {
       const { x, y, rotation } = positionInHand(i, hand.length);
       animationHandler.playAnimation(tweenPosition({ id: card.id, toX: x, toY: y, duration: 100, toR: rotation }), card.id);
     });
-  }, [hand]);
+  }, [hand, handLayout]);
 
   return (
     <>

@@ -133,7 +133,7 @@ export function MatrixStack() {
       ))}
 
       {/* Equals sign */}
-      <div style={{ position: 'absolute', left: 680, top: topY + 30 }}>
+      <div style={{ position: 'absolute', left: 680, top: topY + 30,pointerEvents: 'none',userSelect:'none' }}>
         <p className='text-[80px]'>=</p>
       </div>
 

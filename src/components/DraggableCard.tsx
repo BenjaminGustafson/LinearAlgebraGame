@@ -57,6 +57,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
           }
         });
         useUIState.getState().setZIndex(card.id, 100);
+        useUIState.getState().refreshHandLayout()
       }
     };
 
@@ -145,7 +146,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
           if (origin == 'stack'){
             useUIState.getState().removeCardFromStack(card)
           }else if (origin == 'hand'){
-
+            
           }
           const x = useUIState.getState().entities[card.id].x
           const i = handIndexFromX(x, useUIState.getState().hand.length)

@@ -25,6 +25,8 @@ export type HandSlice = {
   removeCardFromHand: (card: Card) => void;
   dropZone: DropZone|null;
   setDropZone: (zone: DropZone) => void;
+  handLayout: boolean;
+  refreshHandLayout: () => void;
 }
 
 
@@ -78,5 +80,9 @@ export const createHandSlice: StateCreator <
   setDropZone: (zone) => set(state => {
     state.dropZone = zone;
   }),
+  handLayout: false,
+  refreshHandLayout: () => set(state => {
+    state.handLayout = !state.handLayout
+  })
 });
 
