@@ -49,6 +49,7 @@ export function MatrixStack() {
   const resultCard = useStackProduct();
   const incrementTask = useGameState(state => state.incrementTask);
   const dropZone = useUIState(state => state.dropZone);
+  const draggedCardId = useUIState(state => state.draggedCardId)
 
   // Max distance between cards
   const maxGap = 180;
@@ -65,6 +66,9 @@ export function MatrixStack() {
       setTaskSolved(true);
       newPuzzle();
     }
+  }, [fixedLHS, stack])
+
+  function layout(){
     // Distance between cards
     const cardGap = Math.min(startX / (fixedLHS.length + stack.length || 1), maxGap);
     // Rightmost x of the stack cards
@@ -80,7 +84,16 @@ export function MatrixStack() {
         tweenPosition({ id: card.id, toX: startX - i * cardGap, toY: topY, duration: 300 })
       );
     });
+  }
+
+  useEffect(() => {
+    layout()
   }, [fixedLHS, stack]);
+
+  useEffect(() => {
+    if (draggedCardId !== null) return;
+    layout()
+  }, [draggedCardId]);
 
   // Spawn and position the result card
   useEffect(() => {

@@ -5,7 +5,9 @@ export function GameEntity({ id, children }: { id: string; children: React.React
   if (!entity) return null;
 
   return (
-    <div style={{
+    <div 
+    id={id}
+    style={{
       position: 'absolute',
       left: entity.x,
       top: entity.y,

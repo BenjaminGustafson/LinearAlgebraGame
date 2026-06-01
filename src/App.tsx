@@ -95,12 +95,18 @@ function ScaledGameContainer({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scale = useUIState((state) => state.scale);
   const setScale = useUIState((state) => state.setScale);
+  const setContainerOffset = useUIState((state) => state.setContainerOffset);
 
   useEffect(() => {
     const update = () => {
       const scaleX = window.innerWidth / 1920;
       const scaleY = window.innerHeight / 1080;
-      setScale(Math.min(scaleX, scaleY));
+      const newScale = Math.min(scaleX, scaleY);
+      setScale(newScale);
+
+      const offsetX = (window.innerWidth  - 1920 * newScale) / 2;
+      const offsetY = (window.innerHeight - 1080 * newScale) / 2;
+      setContainerOffset(offsetX, offsetY);
     };
     update();
     window.addEventListener('resize', update);

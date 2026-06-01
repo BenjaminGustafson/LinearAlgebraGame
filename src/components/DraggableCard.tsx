@@ -8,7 +8,7 @@ import { type DropZone } from "../state/ui/HandSlice";
 import { useRef, useEffect } from "react";
 import { audioManager } from '../audio/AudioManager';
 import { handIndexFromX } from "./Hand";
-
+import { STACK_ZONE } from "./MatrixStack";
 
 /**
  * 
@@ -67,7 +67,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
 
   const onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
-
+    const cardEl = document.getElementById(card.id);
     const entity = useUIState.getState().entities[card.id];
     if (!entity) return;
 
@@ -87,11 +87,28 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
       const y = startCardY + (e.clientY - startClientY) / scale;
       useUIState.getState().setPosition(card.id, x, y);
       useUIState.getState().setZIndex(card.id,1000);
+      
+      const cardRect = cardEl?.getBoundingClientRect();
+      if (!cardRect) return
 
-      if (x >= 0 && x <= 500 && y >= 300 && y <= 500 && useUIState.getState().dropZone != 'stack'){
-        useUIState.getState().setDropZone('stack')
-      }else if (useUIState.getState().dropZone != 'hand'){
-        useUIState.getState().setDropZone('hand')
+      const { x: offsetX, y: offsetY } = useUIState.getState().containerOffset;
+
+      const cardLeft   = (cardRect.left   - offsetX) / scale;
+      const cardTop    = (cardRect.top    - offsetY) / scale;
+      const cardRight  = (cardRect.right  - offsetX) / scale;
+      const cardBottom = (cardRect.bottom - offsetY) / scale;
+
+      if (cardLeft < STACK_ZONE.left + STACK_ZONE.width 
+        && cardRight > STACK_ZONE.left 
+        && cardTop < STACK_ZONE.top + STACK_ZONE.height
+        && cardBottom > STACK_ZONE.top 
+      ){
+        if (useUIState.getState().dropZone != 'stack'){
+          useUIState.getState().setDropZone('stack')
+        }
+      } else {
+        if (useUIState.getState().dropZone != 'hand')
+          useUIState.getState().setDropZone('hand')
       }
 
       if (useUIState.getState().dropZone == 'hand'){
@@ -121,13 +138,18 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
             useUIState.getState().playCard(card);
             useUIState.getState().setEntityScale(card.id, 1);
           }else if (origin == 'stack'){
-
+            
           }
           break
         case 'hand':
-            const x = useUIState.getState().entities[card.id].x
-            const i = handIndexFromX(x, useUIState.getState().hand.length)
-            useUIState.getState().insertCardToHand(card, i);
+          if (origin == 'stack'){
+            useUIState.getState().removeCardFromStack(card)
+          }else if (origin == 'hand'){
+
+          }
+          const x = useUIState.getState().entities[card.id].x
+          const i = handIndexFromX(x, useUIState.getState().hand.length)
+          useUIState.getState().insertCardToHand(card, i);
           break
       }
     };

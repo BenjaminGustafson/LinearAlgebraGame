@@ -5,9 +5,8 @@ import { immer } from 'zustand/middleware/immer'; // do not delete this import
 
 
 /**
- * Could combine this with stack slice to make card slice
  * 
- * OR put drag and drop in its own slice
+ * Should probably put drag and drop in its own slice
  */
 
 // Not a very extensible way to do this...

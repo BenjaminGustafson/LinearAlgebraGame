@@ -51,7 +51,6 @@ class AnimationHandler {
   }
 
   private play = () => {
-    console.log('Playing ' + this.playing.length + ' animations')
     const time = performance.now();
     
     // Update the animations

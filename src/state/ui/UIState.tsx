@@ -21,6 +21,8 @@ import { useGameState } from '../game/GameState.tsx';
 export type UIState = HandSlice & StackSlice & OptionSlice & PanelSlice & EntitySlice & {
   scale: number;
   setScale: (scale: number) => void;  
+  containerOffset: { x: number, y: number }
+  setContainerOffset: (x: number, y: number) => void
   resetUIForNewTask: () => void;
   taskSolved: boolean;
   setTaskSolved: (solved:boolean) => void;
@@ -37,6 +39,10 @@ export const useUIState = create<UIState>()(
     scale: 1,
     setScale: (scale) => set((state) => {
       state.scale = scale;
+    }),
+    containerOffset: {x: 0, y:0},
+    setContainerOffset: (x, y) => set(state => {
+      state.containerOffset = {x, y}
     }),
     resetUIForNewTask: () => set((state) => {
       state.matrixStack =  [];

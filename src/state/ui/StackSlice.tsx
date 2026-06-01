@@ -8,6 +8,7 @@ import { type EntitySlice } from "./EntitySlice";
 export type StackSlice = {
   matrixStack: Card[];
   addCardToStack: (card: Card) => void;
+  removeCardFromStack: (card: Card) => void;
   popStack: () => void;
   stackProduct: Card;
   setStackProduct: (card: Card) => void;
@@ -30,6 +31,14 @@ export const createStackSlice: StateCreator <
     if (state.matrixStack.length === 0) return;
     const card = state.matrixStack.pop()!;
     state.hand.push(card);
+  }),
+  removeCardFromStack: (card) => set((state) => {
+    const i = state.matrixStack.findIndex(c => c.id === card.id);
+    if (i === -1) {
+      console.warn('Card not found in stack', card.id);
+      return;
+    }
+    state.matrixStack.splice(i, 1);
   }),
   setStackProduct: (card) => set((state) => {
     state.stackProduct = card;
