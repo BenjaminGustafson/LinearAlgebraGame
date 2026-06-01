@@ -77,7 +77,7 @@ export class AudioManager {
 
 
 export const audioManager = new AudioManager();
-const audioPaths = ["click1.ogg"];
+const audioPaths = ["click1.ogg", 'card-slide-1.wav', 'switch8.wav'];
 
 Promise.all(
     audioPaths.map(path => {

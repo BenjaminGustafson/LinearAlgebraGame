@@ -9,7 +9,7 @@ export interface Animation {
 interface AnimationRunner {
   animation: Animation,
   startTime: number,
-  id: number,
+  id: string,
   t: number;
 }
 
@@ -17,7 +17,7 @@ interface AnimationRunner {
  * 
  * addToQueue: runs things in order
  * 
- * runAnimation: runs on its own
+ * runAnimation: runs on its own, can be ided to a 
  */
 class AnimationHandler {
   private queue: Animation[] = [];
@@ -34,12 +34,16 @@ class AnimationHandler {
     }
   }
 
-  playAnimation(animation: Animation){
+  playAnimation(animation: Animation, id:string = ''){
+    if (id !== ''){
+      this.playing = this.playing.filter(runner => runner.id !== id);
+    }
     this.playing.push({animation,
       startTime: performance.now(),
-      id: this.nextId,
+      id: id.length > 0 ? id : this.nextId.toString(),
       t: 0,
     })
+    
     this.nextId = (this.nextId+1) % 1000
     if (this.playing.length == 1){
       requestAnimationFrame(this.play)
@@ -52,9 +56,10 @@ class AnimationHandler {
     
     // Update the animations
     this.playing.forEach(runner => {
+      //console.log('Animation ' + runner.id )
       runner.t = Math.min(1,(time - runner.startTime) / runner.animation.duration)
       runner.animation.update(runner.t)
-      if (runner.id == this.queueHeadId && runner.t >= 1){
+      if (runner.id === this.queueHeadId.toString() && runner.t >= 1){
         this.queue.shift()
         if (this.queue.length !== 0){
           this.queueHeadId = this.nextId

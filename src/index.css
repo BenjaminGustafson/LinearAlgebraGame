@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+
+.no-cursor-change, .no-cursor-change * {
+  cursor: grab !important;
+}

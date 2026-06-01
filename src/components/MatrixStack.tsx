@@ -5,6 +5,9 @@ import { usePick, useGameState, useUIState, useStackProduct } from '../state/';
 import { tweenPosition, animationHandler } from '../animation';
 import { DraggableCard } from './DraggableCard';
 
+export const STACK_ZONE = {left: 20, top: 300, width: 660, height: 200,}
+
+
 function NextButton() {
   const taskSolved = useUIState(state => state.taskSolved)
   const currentTask = useGameState(state => state.currentTask)
@@ -98,7 +101,7 @@ export function MatrixStack() {
       {/* Drop zone */}
       <div style={{
         position: 'absolute',
-        left: 0, top: 300, width: 500, height: 200,
+        ...STACK_ZONE,
         backgroundColor: dropZone == 'stack' ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
         borderRadius: 12,
         transition: 'background-color 0.1s',

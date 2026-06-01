@@ -41,6 +41,9 @@ export const createHandSlice: StateCreator <
   }),
   insertCardToHand: (card, i) => set((state) => {
     const oldI = state.hand.findIndex(c => c.id === card.id)
+    if (oldI == i){
+      console.warn('inserting card to current position')
+    }
     if (oldI !== -1){
       state.hand.splice(oldI, 1);
     }

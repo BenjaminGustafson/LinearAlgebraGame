@@ -57,8 +57,9 @@ export function CardComponent({ card, hidden = false, fixed = false, color='#1e2
         color: 'white',
         width: '180px',
         overflow: 'hidden',
+        userSelect: 'none',
       }}>
-          <span style={{ textAlign: 'right', overflow: 'hidden', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={a} /></span>
+          <span style={{ textAlign: 'right', overflow: 'hidden', fontSize: 'clamp(10px, 3vw, 28px)', }}><StaticMath latex={a} /></span>
           <span style={{ textAlign: 'left',  overflow: 'hidden', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={b} /></span>
           <span style={{ textAlign: 'right', overflow: 'hidden', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={c} /></span>
           <span style={{ textAlign: 'left',  overflow: 'hidden', fontSize: 'clamp(10px, 3vw, 28px)' }}><StaticMath latex={d} /></span>

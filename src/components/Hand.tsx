@@ -54,7 +54,7 @@ export function Hand() {
     hand.forEach((card, i) => {
       if (card.id === draggedCardId) return;
       const { x, y, rotation } = positionInHand(i, hand.length);
-      animationHandler.playAnimation(tweenPosition({ id: card.id, toX: x, toY: y, duration: 100, toR: rotation }));
+      animationHandler.playAnimation(tweenPosition({ id: card.id, toX: x, toY: y, duration: 100, toR: rotation }), card.id);
     });
   }, [hand]);
 
