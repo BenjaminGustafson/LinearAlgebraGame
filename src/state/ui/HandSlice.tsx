@@ -4,14 +4,6 @@ import { type StackSlice } from './StackSlice';
 import { immer } from 'zustand/middleware/immer'; // do not delete this import
 
 
-/**
- * 
- * Should probably put drag and drop in its own slice
- */
-
-// Not a very extensible way to do this...
-// But its probably fine for a custom dnd system with few zones
-export type DropZone = 'stack' | 'hand';
 
 export type HandSlice = {
   hand: Card[];
@@ -19,12 +11,7 @@ export type HandSlice = {
   reorderHand: (from: number, to: number) => void;
   playCard: (card: Card) => void;   // hand -> stack
   insertCardToHand: (card: Card, i:number) => void;
-  // Drag and drop
-  draggedCardId: string|null;
-  setDraggedCardId: (id:string|null) => void;
   removeCardFromHand: (card: Card) => void;
-  dropZone: DropZone|null;
-  setDropZone: (zone: DropZone) => void;
   handLayout: boolean;
   refreshHandLayout: () => void;
 }
@@ -71,14 +58,6 @@ export const createHandSlice: StateCreator <
     }
     state.hand.splice(i, 1);
     state.matrixStack.push(card);
-  }),
-  draggedCardId: null,
-  setDraggedCardId: (id) => set(state => {
-    state.draggedCardId = id
-  }),
-  dropZone: null,
-  setDropZone: (zone) => set(state => {
-    state.dropZone = zone;
   }),
   handLayout: false,
   refreshHandLayout: () => set(state => {

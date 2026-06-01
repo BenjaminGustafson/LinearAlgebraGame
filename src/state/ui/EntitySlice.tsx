@@ -51,6 +51,7 @@ export const createEntitySlice: StateCreator <
   }),
 
   setZIndex: (id, z) => set((state) => {
+    console.log("setZIndex", id, z);
     if (state.entities[id]) {
       state.entities[id].zIndex = z;
     }

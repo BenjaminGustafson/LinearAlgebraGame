@@ -11,7 +11,7 @@ const MAX_HAND_WIDTH = 800;
 // Max distance btw cards
 const MAX_STEP = CARD_WIDTH - 8;
 // Dist btw cards
-const START_Y = 860;
+const START_Y = 850;
 // Maximum degrees of rotation 
 const MAX_ROTATION = 8;
 // Pixels of arc
@@ -50,14 +50,23 @@ export function Hand() {
   const hand = useUIState((state) => state.hand);
   const handLayout = useUIState((state) => state.handLayout)
   const draggedCardId = useUIState((state) => state.draggedCardId);
+  const hoveredCardId = useUIState((state) => state.hoveredCardId)
 
   useEffect(() => {
+    console.log(hoveredCardId)
     hand.forEach((card, i) => {
       if (card.id === draggedCardId) return;
-      const { x, y, rotation } = positionInHand(i, hand.length);
+      var { x, y, rotation } = positionInHand(i, hand.length);
+
+      if (card.id === hoveredCardId) {
+        y = START_Y
+        rotation = 0
+        console.log(' HAND ')
+        useUIState.getState().setZIndex(card.id, 1000)
+      }
       animationHandler.playAnimation(tweenPosition({ id: card.id, toX: x, toY: y, duration: 100, toR: rotation }), card.id);
     });
-  }, [hand, handLayout]);
+  }, [hand, hoveredCardId]);
 
   return (
     <>

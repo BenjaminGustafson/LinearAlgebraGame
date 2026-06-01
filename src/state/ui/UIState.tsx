@@ -12,13 +12,14 @@ import { createStackSlice, type StackSlice } from './StackSlice.tsx';
 import { createOptionSlice, type OptionSlice } from './OptionSlice.tsx';
 import { createPanelSlice, type PanelSlice } from './PanelSlice.tsx';
 import { createEntitySlice, type EntitySlice } from './EntitySlice.tsx';
+import { createDragAndDropSlice, type DragAndDropSlice } from './DragAndDropSlice.tsx';
 
 import { useGameState } from '../game/GameState.tsx';
 
 /**
  * The state of the UI.
  */
-export type UIState = HandSlice & StackSlice & OptionSlice & PanelSlice & EntitySlice & {
+export type UIState = HandSlice & StackSlice & OptionSlice & PanelSlice & EntitySlice & DragAndDropSlice & {
   scale: number;
   setScale: (scale: number) => void;  
   containerOffset: { x: number, y: number }
@@ -36,6 +37,7 @@ export const useUIState = create<UIState>()(
     ...createOptionSlice(set as any, get, store as any),
     ...createPanelSlice(set as any, get, store as any),
     ...createEntitySlice(set as any, get, store as any),
+    ...createDragAndDropSlice(set as any, get, store as any),
     scale: 1,
     setScale: (scale) => set((state) => {
       state.scale = scale;

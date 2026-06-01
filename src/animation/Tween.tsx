@@ -23,10 +23,6 @@ export function tweenPosition({id, toX, toY, duration, toR=0}:
       id,
       startR + (toR - startR) * eased,
     );
-    useUIState.getState().setZIndex(
-      id,
-      100
-    );
   }
 
   return {

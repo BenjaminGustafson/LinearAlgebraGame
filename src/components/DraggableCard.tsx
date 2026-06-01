@@ -32,11 +32,11 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
       e.preventDefault();
       if (!cardRef.current) return;
       
-
       const topElement = document.elementFromPoint(e.clientX, e.clientY);
       const isOver = cardRef.current === topElement || cardRef.current.contains(topElement);
 
       if (isOver && !mouseOverRef.current) {
+        useUIState.getState().setHoveredCardId(card.id, true)
         mouseOverRef.current = true;
         audioManager.play('click1', {pitch: 6*(Math.random()-0.5), volume:0.5})
         
@@ -49,6 +49,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
         useUIState.getState().setRotation(card.id, 0);
         useUIState.getState().setZIndex(card.id, 1000);
       } else if (!isOver && mouseOverRef.current) {
+        useUIState.getState().setHoveredCardId(card.id, false)
         mouseOverRef.current = false;
         animationHandler.playAnimation({
           duration: 100,
@@ -56,8 +57,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
             useUIState.getState().setEntityScale(card.id, 1 + 0.25 * (1-t));
           }
         });
-        useUIState.getState().setZIndex(card.id, 100);
-        useUIState.getState().refreshHandLayout()
+        useUIState.getState().setZIndex(card.id, 101);
       }
     };
 
@@ -87,7 +87,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
       const x = startCardX + (e.clientX - startClientX) / scale;
       const y = startCardY + (e.clientY - startClientY) / scale;
       useUIState.getState().setPosition(card.id, x, y);
-      useUIState.getState().setZIndex(card.id,1000);
+      useUIState.getState().setZIndex(card.id,1001);
       
       const cardRect = cardEl?.getBoundingClientRect();
       if (!cardRect) return
