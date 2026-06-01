@@ -38,6 +38,7 @@ class AnimationHandler {
     if (animation.duration == 0) return
     if (id !== ''){
       this.playing = this.playing.filter(runner => runner.id !== id);
+      console.log('canceled anims')
     }
     this.playing.push({animation,
       startTime: performance.now(),
@@ -53,7 +54,8 @@ class AnimationHandler {
 
   private play = () => {
     const time = performance.now();
-    
+    console.log('Playing ' + this.playing.length + ' animations' )
+
     // Update the animations
     this.playing.forEach(runner => {
       //console.log('Animation ' + runner.id )

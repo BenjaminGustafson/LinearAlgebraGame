@@ -57,6 +57,8 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
         useUIState.getState().setZIndex(card.id, 1000);
       } else if (!isOver && mouseOverRef.current) {
         useUIState.getState().setHoveredCardId(card.id, false)
+        if (origin == 'hand')
+          useUIState.getState().refreshHandLayout()
         mouseOverRef.current = false;
         animationHandler.playAnimation({
           duration: 100,
@@ -82,6 +84,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
     if (!entity) return;
 
     if (entity.freezeTransform) {
+      audioManager.play('error_005', {pitch: -3})
       console.log('ignored mousedown input')
       return
     }

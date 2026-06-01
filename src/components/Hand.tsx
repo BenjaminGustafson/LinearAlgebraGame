@@ -59,13 +59,17 @@ export function Hand() {
       var { x, y, rotation } = positionInHand(i, hand.length);
 
       if (card.id === hoveredCardId) {
-        y = START_Y
         useUIState.getState().setRotation(card.id, 0)
-        rotation = 0
+        useUIState.getState().setPosition(card.id, x, START_Y)
         useUIState.getState().setZIndex(card.id, 1000)
+        return
       }else {
         useUIState.getState().setZIndex(card.id, 100+i)
       }
+
+      const entity = useUIState.getState().entities[card.id]
+      const eq = (a:number,b:number) => Math.abs(a-b) < 0.001
+      if (eq(x,entity.x) && eq(y,entity.y) && eq(rotation, entity.rotation)) return;
 
       animationHandler.playAnimation(
         priorityAnim(
