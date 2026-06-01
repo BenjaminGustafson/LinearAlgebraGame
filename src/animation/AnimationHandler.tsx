@@ -10,7 +10,7 @@ interface AnimationRunner {
   animation: Animation,
   startTime: number,
   id: string,
-  t: number;
+  t: number,
 }
 
 /**
@@ -35,6 +35,7 @@ class AnimationHandler {
   }
 
   playAnimation(animation: Animation, id:string = ''){
+    if (animation.duration == 0) return
     if (id !== ''){
       this.playing = this.playing.filter(runner => runner.id !== id);
     }

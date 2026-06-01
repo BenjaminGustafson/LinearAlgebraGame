@@ -9,17 +9,19 @@ export interface EntityRecord {
   scale: number;
   rotation: number;
   zIndex?: number;
+  freezeTransform?: boolean;
 }
 
 export interface EntitySlice {
   entities: Record<string, EntityRecord>;
   spawnEntity: (entity: EntityRecord) => void;
   despawnEntity: (id: string) => void;
-  setPosition: (id: string, x: number, y: number) => void;
-  setRotation: (id: string, rotation: number) => void;
-  setEntityScale: (id: string, scale:number) => void;
-  setZIndex: (id: string, z: number) => void;
+  setPosition: (id: string, x: number, y: number, priority?:boolean) => void;
+  setRotation: (id: string, rotation: number, priority?:boolean) => void;
+  setEntityScale: (id: string, scale:number, priority?:boolean) => void;
+  setZIndex: (id: string, z: number, priority?:boolean) => void;
   resetEntities: () => void;
+  setFreezeTransform: (id: string, freezeTransform: boolean) => void;
 }
 
 export const createEntitySlice: StateCreator <
@@ -37,7 +39,7 @@ export const createEntitySlice: StateCreator <
     delete state.entities[id];
   }),
 
-  setPosition: (id, x, y) => set((state) => {
+  setPosition: (id, x, y,) => set((state) => {
     if (state.entities[id]) {
       state.entities[id].x = x;
       state.entities[id].y = y;
@@ -51,7 +53,6 @@ export const createEntitySlice: StateCreator <
   }),
 
   setZIndex: (id, z) => set((state) => {
-    console.log("setZIndex", id, z);
     if (state.entities[id]) {
       state.entities[id].zIndex = z;
     }
@@ -60,6 +61,12 @@ export const createEntitySlice: StateCreator <
   setEntityScale: (id, scale) => set((state) => {
     if (state.entities[id]) {
       state.entities[id].scale = scale;
+    }
+  }),
+
+  setFreezeTransform: (id, freezeTransform) => set((state) => {
+    if (state.entities[id]) {
+      state.entities[id].freezeTransform = freezeTransform;
     }
   }),
 

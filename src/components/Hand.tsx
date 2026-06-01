@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { tweenPosition, animationHandler } from '../animation'
 import { DraggableCard } from './DraggableCard.tsx';
 import { CARD_WIDTH } from './CardComponent.tsx';
+import { priorityAnim } from '../animation/Tween.tsx';
 
 // Max space for the hand
 const MAX_HAND_WIDTH = 800;
@@ -53,18 +54,26 @@ export function Hand() {
   const hoveredCardId = useUIState((state) => state.hoveredCardId)
 
   useEffect(() => {
-    console.log(hoveredCardId)
     hand.forEach((card, i) => {
       if (card.id === draggedCardId) return;
       var { x, y, rotation } = positionInHand(i, hand.length);
 
       if (card.id === hoveredCardId) {
         y = START_Y
+        useUIState.getState().setRotation(card.id, 0)
         rotation = 0
-        console.log(' HAND ')
         useUIState.getState().setZIndex(card.id, 1000)
+      }else {
+        useUIState.getState().setZIndex(card.id, 100+i)
       }
-      animationHandler.playAnimation(tweenPosition({ id: card.id, toX: x, toY: y, duration: 100, toR: rotation }), card.id);
+
+      animationHandler.playAnimation(
+        priorityAnim(
+          tweenPosition({ id: card.id, toX: x, toY: y, duration: 100, toR: rotation }),
+          card.id
+        ),
+        card.id
+      )
     });
   }, [hand, hoveredCardId]);
 

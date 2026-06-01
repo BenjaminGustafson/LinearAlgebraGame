@@ -4,6 +4,7 @@ import { TASK_LIST, newPuzzle } from '../data/tasks';
 import { usePick, useGameState, useUIState, useStackProduct } from '../state/';
 import { tweenPosition, animationHandler } from '../animation';
 import { DraggableCard } from './DraggableCard';
+import { priorityAnim } from '../animation/Tween';
 
 export const STACK_ZONE = {left: 20, top: 300, width: 660, height: 200,}
 
@@ -50,6 +51,7 @@ export function MatrixStack() {
   const incrementTask = useGameState(state => state.incrementTask);
   const dropZone = useUIState(state => state.dropZone);
   const draggedCardId = useUIState(state => state.draggedCardId)
+  const hoveredCardId = useUIState(state => state.hoveredCardId)
 
   // Max distance between cards
   const maxGap = 180;
@@ -75,14 +77,22 @@ export function MatrixStack() {
     const stackStartX = startX - cardGap * fixedLHS.length;
 
     stack.forEach((card, i) => {
-      animationHandler.playAnimation(
-        tweenPosition({ id: card.id, toX: stackStartX - i * cardGap, toY: topY, duration: 300 })
-      );
+      if (card.id === draggedCardId) return;
+
+      if (card.id === hoveredCardId) {
+        useUIState.getState().setZIndex(card.id, 1000)
+      }else {
+        useUIState.getState().setZIndex(card.id, 100+i)
+      }
+
+      animationHandler.playAnimation(priorityAnim(
+        tweenPosition({ id: card.id, toX: stackStartX - i * cardGap, toY: topY, duration: 100 }), card.id
+      ),card.id);
     });
     fixedLHS.forEach((card, i) => {
-      animationHandler.playAnimation(
-        tweenPosition({ id: card.id, toX: startX - i * cardGap, toY: topY, duration: 300 })
-      );
+      animationHandler.playAnimation(priorityAnim(
+        tweenPosition({ id: card.id, toX: startX - i * cardGap, toY: topY, duration: 100 }), card.id
+      ),card.id);
     });
   }
 
@@ -93,7 +103,7 @@ export function MatrixStack() {
   useEffect(() => {
     if (draggedCardId !== null) return;
     layout()
-  }, [draggedCardId]);
+  }, [draggedCardId, hoveredCardId]);
 
   // Spawn and position the result card
   useEffect(() => {
@@ -127,9 +137,7 @@ export function MatrixStack() {
       ))}
 
       {stack.map((card) => (
-        card.id === topStackCard?.id
-          ? <DraggableCard key={card.id} card={card} origin="stack" />
-          : <CardComponent key={card.id} card={card} fixed />
+          <DraggableCard key={card.id} card={card} origin="stack" />
       ))}
 
       {/* Equals sign */}

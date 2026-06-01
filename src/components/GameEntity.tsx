@@ -4,7 +4,6 @@ export function GameEntity({ id, children }: { id: string; children: React.React
   const entity = useUIState(state => state.entities[id]);
   if (!entity) return null;
 
-  console.log("GameEntity", id, entity.zIndex);
 
   return (
     <div 

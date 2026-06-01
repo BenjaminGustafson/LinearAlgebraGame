@@ -25,6 +25,10 @@ export const createStackSlice: StateCreator <
 > = (set) => ({
   matrixStack: [],
   addCardToStack: (card) => set((state) => {
+    if (state.matrixStack.findIndex(c => c.id === card.id) !== -1) {
+      console.warn('card already on stack')
+      return
+    }
     state.matrixStack.push(card);
   }),
   popStack: () => set((state) => {
