@@ -136,6 +136,8 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
         if (oldI !== i){
           useUIState.getState().insertCardToHand(card, i);
         }
+      }else {
+        //useUIState.getState().removeCardFromHand(card)
       }
     };
 
@@ -156,7 +158,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
             useUIState.getState().playCard(card);
             useUIState.getState().setEntityScale(card.id, 1);
           }else if (origin == 'stack'){
-            
+            useUIState.getState().removeCardFromHand(card)
           }
           break
         case 'hand':
