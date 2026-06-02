@@ -89,7 +89,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
       return
     }
 
-    audioManager.play('card-slide-1', {pitch: 6*(Math.random()-0.5)})
+    audioManager.play('card-slide-1', {pitch: 6*(Math.random()-0.5), volume: 0.2})
 
     const startCardX = entity.x;
     const startCardY = entity.y;
