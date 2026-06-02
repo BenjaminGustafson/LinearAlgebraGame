@@ -26,47 +26,48 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseOverRef = useRef(false);
 
+
+  const leaveHover = () => {
+    useUIState.getState().setHoveredCardId(card.id, false)
+    mouseOverRef.current = false;
+    animationHandler.playAnimation({
+      duration: 100,
+      update: (t) => {
+        useUIState.getState().setEntityScale(card.id, 1 + 0.25 * (1-t));
+      }
+    });
+  }
+
   // Scale up cards on mouse over
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       e.preventDefault();
       if (!cardRef.current) return;
 
-      if (useUIState.getState().entities[card.id].freezeTransform) {
-        //console.log('ignored mouseover input')
-        return
-      }
-      
       const topElement = document.elementFromPoint(e.clientX, e.clientY);
       const isOver = cardRef.current === topElement || cardRef.current.contains(topElement);
 
+      // If the mouse is over the card, but wasn't previously
       if (isOver && !mouseOverRef.current) {
+        // If this card is not accepting input, skip
+        if (useUIState.getState().entities[card.id].freezeTransform) {
+          return
+        }
+
+        // This card is now being hovered
         useUIState.getState().setHoveredCardId(card.id, true)
         mouseOverRef.current = true;
-        audioManager.play('click1', {pitch: 6*(Math.random()-0.5), volume:0.5})
         
-        // animationHandler.playAnimation({
-        //   duration: 100,
-        //   update: (t) => {
-        //     useUIState.getState().setEntityScale(card.id, 1 + 0.25 * t);
-        //   }
-        // });
+        audioManager.play('click1', {pitch: 6*(Math.random()-0.5), volume:0.5})
 
         useUIState.getState().setEntityScale(card.id, 1.25);
         useUIState.getState().setRotation(card.id, 0);
         useUIState.getState().setZIndex(card.id, 1000);
-      } else if (!isOver && mouseOverRef.current) {
-        useUIState.getState().setHoveredCardId(card.id, false)
-        if (origin == 'hand')
-          useUIState.getState().refreshHandLayout()
-        mouseOverRef.current = false;
-        animationHandler.playAnimation({
-          duration: 100,
-          update: (t) => {
-            useUIState.getState().setEntityScale(card.id, 1 + 0.25 * (1-t));
-          }
-        });
-        useUIState.getState().setZIndex(card.id, 101);
+
+      } 
+      // The mouse just left the card
+      else if (!isOver && mouseOverRef.current) {
+        leaveHover()
       }
     };
 
@@ -75,42 +76,38 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
   }, []);
 
 
- 
-
   const onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     const cardEl = document.getElementById(card.id);
     const entity = useUIState.getState().entities[card.id];
     if (!entity) return;
 
+    // Ignore mouse input
     if (entity.freezeTransform) {
-      audioManager.play('error_005', {pitch: -3})
-      console.log('ignored mousedown input')
+      //audioManager.play('error_005', {pitch: -3})
+      //console.log('ignored mousedown input', card.id)
       return
     }
 
     audioManager.play('card-slide-1', {pitch: 6*(Math.random()-0.5)})
 
-    useUIState.getState().setDraggedCardId(card.id)
-
     const startCardX = entity.x;
     const startCardY = entity.y;
-    const startCardR = entity.rotation;
     const startClientX = e.clientX;
     const startClientY = e.clientY;
 
-    const calculateDropZone = (e: MouseEvent) => {
+    const onMouseMove = (e: MouseEvent) => {
+      useUIState.getState().setDraggedCardId(card.id)
+
       const scale = useUIState.getState().scale
-      const x = startCardX + (e.clientX - startClientX) / scale;
-      const y = startCardY + (e.clientY - startClientY) / scale;
-      useUIState.getState().setPosition(card.id, x, y);
-      useUIState.getState().setZIndex(card.id,1001);
-      
+      const { x: offsetX, y: offsetY } = useUIState.getState().containerOffset;
+
+      const x = startCardX + (e.clientX - startClientX ) / scale;
+      const y = startCardY + (e.clientY - startClientY ) / scale;
+
       const cardRect = cardEl?.getBoundingClientRect();
       if (!cardRect) return
-  
-      const { x: offsetX, y: offsetY } = useUIState.getState().containerOffset;
-  
+
       const cardLeft   = (cardRect.left   - offsetX) / scale;
       const cardTop    = (cardRect.top    - offsetY) / scale;
       const cardRight  = (cardRect.right  - offsetX) / scale;
@@ -128,10 +125,9 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
         if (useUIState.getState().dropZone != 'hand')
           useUIState.getState().setDropZone('hand')
       }
-    }
 
-    const onMouseMove = (e: MouseEvent) => {
-      calculateDropZone(e)
+      useUIState.getState().setPosition(card.id, x, y);
+      useUIState.getState().setZIndex(card.id,1000);
 
       if (useUIState.getState().dropZone == 'hand'){
         const x = useUIState.getState().entities[card.id].x
@@ -144,11 +140,13 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
     };
 
     const onMouseUp = (e: MouseEvent) => {
+      // When we release the card, it no longer accepts input until it returns home
+      // The card's home is responsible for turning input back on
       useUIState.getState().setDraggedCardId(null)
+      leaveHover()
+      useUIState.getState().setFreezeTransform(card.id, true)
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
-
-      calculateDropZone(e)
     
       // TODO: the logic here is just if something changes drop zone move it from one to the other
       // So really what we need is a unified uiState function that moves a card from one drop zone to another
@@ -165,7 +163,7 @@ export function DraggableCard({ card, origin }: { card: Card, origin: DropZone }
           if (origin == 'stack'){
             useUIState.getState().removeCardFromStack(card)
           }else if (origin == 'hand'){
-            
+
           }
           const x = useUIState.getState().entities[card.id].x
           const i = handIndexFromX(x, useUIState.getState().hand.length)

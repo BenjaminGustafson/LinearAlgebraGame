@@ -2,13 +2,14 @@ import { useUIState } from "../state";
 import { type Animation, animationHandler } from "./AnimationHandler";
 
 
+/**
+ * 
+ * Releases noInput on animation finish
+ */
 export function priorityAnim(anim:Animation, id:string):Animation{
   return {
     duration: anim.duration,
     update: (t) =>{
-      if (!useUIState.getState().entities[id].freezeTransform){
-        useUIState.getState().setFreezeTransform(id, true)
-      }
       anim.update(t)
       if (t >= 1){
         useUIState.getState().setFreezeTransform(id, false)
@@ -33,15 +34,10 @@ export function tweenPosition({id, toX, toY, duration, toR=0}:
 
   const update = (t: number) => {
     const eased = t < 0.5 ? 2*t*t : -1 + (4 - 2*t) * t;
-    useUIState.getState().setPosition(
-      id,
-      startX + (toX - startX) * eased,
-      startY + (toY - startY) * eased,
-    );
-    useUIState.getState().setRotation(
-      id,
-      startR + (toR - startR) * eased,
-    );
+    const x = startX + (toX - startX) * eased
+    const y = startY + (toY - startY) * eased
+    useUIState.getState().setPosition(id,x,y)
+    useUIState.getState().setRotation(id,startR + (toR - startR) * eased);
   }
 
   return {

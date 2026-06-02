@@ -54,32 +54,37 @@ export function Hand() {
   const hoveredCardId = useUIState((state) => state.hoveredCardId)
 
   useEffect(() => {
+    console.log('hovered', hoveredCardId, 'dragged', draggedCardId)
     hand.forEach((card, i) => {
+      // Skip the dragged card
       if (card.id === draggedCardId) return;
-      var { x, y, rotation } = positionInHand(i, hand.length);
 
+      var { x, y, rotation } = positionInHand(i, hand.length);
+      const entity = useUIState.getState().entities[card.id]
+
+      // Pull the hovered card out of the arc
       if (card.id === hoveredCardId) {
-        useUIState.getState().setRotation(card.id, 0)
         useUIState.getState().setPosition(card.id, x, START_Y)
-        useUIState.getState().setZIndex(card.id, 1000)
         return
       }else {
         useUIState.getState().setZIndex(card.id, 100+i)
       }
 
-      const entity = useUIState.getState().entities[card.id]
+      // If the card is already in its place, don't animate it
       const eq = (a:number,b:number) => Math.abs(a-b) < 0.001
-      if (eq(x,entity.x) && eq(y,entity.y) && eq(rotation, entity.rotation)) return;
+      if (eq(x,entity.x) && eq(y,entity.y) && eq(rotation, entity.rotation)){
+        useUIState.getState().setFreezeTransform(card.id, false)
+        return;
+      } 
 
+      // If we reach this far, the card needs to be returned to its position in the hand
       animationHandler.playAnimation(
         priorityAnim(
           tweenPosition({ id: card.id, toX: x, toY: y, duration: 100, toR: rotation }),
-          card.id
-        ),
-        card.id
+        card.id)
       )
     });
-  }, [hand, hoveredCardId]);
+  }, [hand, hoveredCardId, draggedCardId]);
 
   return (
     <>

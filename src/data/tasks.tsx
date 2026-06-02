@@ -10,7 +10,7 @@ import { spawnCardEntity } from "../components/CardComponent"
  */
 function randomNumberGenerator(seed: number): () => number {
     var intSeed = Math.floor(seed * 0xFFFFFFFF)
-    console.log(seed, intSeed)
+    //console.log(seed, intSeed)
     return () => {
         intSeed |= 0; intSeed = intSeed + 0x6D2B79F5 | 0;
         let t = Math.imul(intSeed ^ intSeed >>> 15, 1 | intSeed);

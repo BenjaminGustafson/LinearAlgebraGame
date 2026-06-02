@@ -87,7 +87,7 @@ export function MatrixStack() {
 
       animationHandler.playAnimation(priorityAnim(
         tweenPosition({ id: card.id, toX: stackStartX - i * cardGap, toY: topY, duration: 100 }), card.id
-      ),card.id);
+      ));
     });
     fixedLHS.forEach((card, i) => {
       animationHandler.playAnimation(priorityAnim(
