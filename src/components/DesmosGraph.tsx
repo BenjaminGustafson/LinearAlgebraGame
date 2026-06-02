@@ -2,6 +2,7 @@ declare const Desmos: any;
 import { useEffect, useRef } from 'react';
 import type { Mat2 } from '../math/Matrix';
 import { useGameState, useStackProduct } from '../state'
+import { audioManager } from '../audio/AudioManager';
 
 
 export function DesmosGraph() {
@@ -78,14 +79,28 @@ export function DesmosGraph() {
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const t = Math.min(elapsed / duration, 1);
-
+      
       const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       const lerp = (a: number, b: number) => a + (b - a) * eased;
 
-      calculator.setExpression({ id: 'a', latex: `a=${lerp(oldTransform[0][0], newTransform[0][0])}` });
-      calculator.setExpression({ id: 'b', latex: `b=${lerp(oldTransform[0][1], newTransform[0][1])}` });
-      calculator.setExpression({ id: 'c', latex: `c=${lerp(oldTransform[1][0], newTransform[1][0])}` });
-      calculator.setExpression({ id: 'd', latex: `d=${lerp(oldTransform[1][1], newTransform[1][1])}` });
+      const a = lerp(oldTransform[0][0], newTransform[0][0])
+      const b = lerp(oldTransform[0][1], newTransform[0][1])
+      const c = lerp(oldTransform[1][0], newTransform[1][0])
+      const d = lerp(oldTransform[1][1], newTransform[1][1])
+
+      if (oldTransform[0][0] != newTransform[0][0])
+        audioManager.playSine((a > 0 ? 220 : 246.9) * (1 + (Math.abs(oldTransform[0][0]) < Math.abs(newTransform[0][0]) ? t : 1-t)), 0)
+      if (oldTransform[0][1] != newTransform[0][1])
+        audioManager.playSine((b > 0 ? 277 : 261.6) * (1 + (Math.abs(oldTransform[0][1]) < Math.abs(newTransform[0][1]) ? t : 1-t)), 1)
+      if (oldTransform[1][0] != newTransform[1][0])
+        audioManager.playSine((c > 0 ? 293.7 : 311) * (1 + (Math.abs(oldTransform[1][0]) < Math.abs(newTransform[1][0]) ? t : 1-t)), 2)
+      if (oldTransform[1][1] != newTransform[1][1])
+        audioManager.playSine((d > 0 ? 329.6 : 349.6) * (1 + (Math.abs(oldTransform[1][1]) < Math.abs(newTransform[1][1]) ? t : 1-t)), 3)
+
+      calculator.setExpression({ id: 'a', latex: `a=${a}` });
+      calculator.setExpression({ id: 'b', latex: `b=${b}` });
+      calculator.setExpression({ id: 'c', latex: `c=${c}` });
+      calculator.setExpression({ id: 'd', latex: `d=${d}` });
 
 
       /**
