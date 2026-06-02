@@ -91,10 +91,17 @@ function simplifyMat2(m: string[][]): string[][] {
 }
 
 export function multiplyExprMat2Stack(matrices: string[][][]): string[][] {
-  return matrices.reduce((acc, mat) =>
-    simplifyMat2(multiplyExprMat2(acc, mat)),
+
+  // const multiplied = matrices.reduce(((acc, mat) => 
+  //   multiplyExprMat2(acc, mat)),
+  //   [['1', '0'], ['0', '1']]
+  // )
+  // const simplify = simplifyMat2(multiplied)
+  const multiplyAndSimplify = matrices.reduce(((acc, mat) => 
+    simplifyMat2(multiplyExprMat2(acc, mat))),
     [['1', '0'], ['0', '1']]
-  );
+  )
+  return multiplyAndSimplify
 }
 
 // Helpers for useStackProduct ^^^

@@ -92,9 +92,13 @@ export const TASK_LIST : Task[] = [
         loadTask: function () {
             const simpleTrans = [
                 numericCard([[2,0],[0,1]], "Scale x by 2"),
-                numericCard([[-2,0],[0,1]], "Scale y by 2"),
-                numericCard([[2,-1],[-1,-2]], "Skew x by 1 y"),
-                numericCard([[2,-1],[0,1]], "Skew y by 1 x")
+                numericCard([[1,0],[0,2]], "Scale y by 2"),
+                numericCard([[1,1],[0,1]], "Skew x by 1 y"),
+                numericCard([[1,0],[1,1]], "Skew y by 1 x"),
+                numericCard([[1/2,0],[0,1]], "Scale x by 1/2"),
+                numericCard([[1,0],[0,1/2]], "Scale y by 1/2"),
+                numericCard([[1,-1],[0,1]], "Skew x by -1 y"),
+                numericCard([[1,0],[-1,1]], "Skew y by -1 x"),
             ]
             const i = this.useRNG()[0] 
             const target = createCard({

@@ -53,12 +53,12 @@ export class AudioManager {
 
   playSine(frequency = 440, channel = 0, duration = 0.1, volume = 0.1) {
     this.lastTimePlayed['sine'] ??= {}
-    if (!this.lastTimePlayed['sine'][channel] != null && Date.now() - this.lastTimePlayed['sine'][channel] < 50) {
+    if (!this.lastTimePlayed['sine'][channel] != null && Date.now() - this.lastTimePlayed['sine'][channel] < 90) {
         return;
     }
     this.lastTimePlayed['sine'][channel] = Date.now()
 
-    const now = this.context.currentTime;
+    const start = Math.ceil(this.context.currentTime*10)/10 + channel * 0.05;
 
     const osc = this.context.createOscillator();
     osc.type = 'sine';
@@ -69,19 +69,19 @@ export class AudioManager {
     const attack = 0.001;
     const release = 0.2;
 
-    gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(volume, now + attack);
+    gainNode.gain.setValueAtTime(0, start);
+    gainNode.gain.linearRampToValueAtTime(volume, start + attack);
 
-    const fadeOutStart = Math.max(now + attack,now + duration - release);
+    const fadeOutStart = Math.max(start + attack,start + duration - release);
 
     gainNode.gain.setValueAtTime(volume, fadeOutStart);
-    gainNode.gain.linearRampToValueAtTime(0, now + duration);
+    gainNode.gain.linearRampToValueAtTime(0, start + duration);
 
     osc.connect(gainNode);
     gainNode.connect(this.context.destination);
 
-    osc.start(now);
-    osc.stop(now + duration);
+    osc.start(start);
+    osc.stop(start + duration);
 }
   
   
