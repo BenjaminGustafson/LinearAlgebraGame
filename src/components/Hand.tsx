@@ -8,7 +8,7 @@ import { CARD_WIDTH } from './CardComponent.tsx';
 import { priorityAnim } from '../animation/Tween.tsx';
 
 // Max space for the hand
-const MAX_HAND_WIDTH = 800;
+const MAX_HAND_WIDTH = 1150;
 // Max distance btw cards
 const MAX_STEP = CARD_WIDTH - 8;
 // Dist btw cards
@@ -16,7 +16,7 @@ const START_Y = 850;
 // Maximum degrees of rotation 
 const MAX_ROTATION = 8;
 // Pixels of arc
-const ARC_DEPTH = 20;
+const ARC_DEPTH = 40;
 
 
 function calcHandPosition (handLength: number){

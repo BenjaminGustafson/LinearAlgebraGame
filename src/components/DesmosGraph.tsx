@@ -88,14 +88,16 @@ export function DesmosGraph() {
       const c = lerp(oldTransform[1][0], newTransform[1][0])
       const d = lerp(oldTransform[1][1], newTransform[1][1])
 
-      if (oldTransform[0][0] != newTransform[0][0])
-        audioManager.playSine((a > 0 ? 220 : 246.9) * (1 + (Math.abs(oldTransform[0][0]) < Math.abs(newTransform[0][0]) ? t : 1-t)), 0)
-      if (oldTransform[0][1] != newTransform[0][1])
-        audioManager.playSine((b > 0 ? 277 : 261.6) * (1 + (Math.abs(oldTransform[0][1]) < Math.abs(newTransform[0][1]) ? t : 1-t)), 1)
-      if (oldTransform[1][0] != newTransform[1][0])
-        audioManager.playSine((c > 0 ? 293.7 : 311) * (1 + (Math.abs(oldTransform[1][0]) < Math.abs(newTransform[1][0]) ? t : 1-t)), 2)
-      if (oldTransform[1][1] != newTransform[1][1])
-        audioManager.playSine((d > 0 ? 329.6 : 349.6) * (1 + (Math.abs(oldTransform[1][1]) < Math.abs(newTransform[1][1]) ? t : 1-t)), 3)
+      // if (oldTransform[0][0] != newTransform[0][0])
+      //   audioManager.playSine((a > 0 ? 220 : 246.9) * (1 + (Math.abs(oldTransform[0][0]) < Math.abs(newTransform[0][0]) ? t : 1-t)), 0)
+      // if (oldTransform[0][1] != newTransform[0][1])
+      //   audioManager.playSine((b > 0 ? 277 : 261.6) * (1 + (Math.abs(oldTransform[0][1]) < Math.abs(newTransform[0][1]) ? t : 1-t)), 1)
+      // if (oldTransform[1][0] != newTransform[1][0])
+      //   audioManager.playSine((c > 0 ? 293.7 : 311) * (1 + (Math.abs(oldTransform[1][0]) < Math.abs(newTransform[1][0]) ? t : 1-t)), 2)
+      // if (oldTransform[1][1] != newTransform[1][1])
+      //   audioManager.playSine((d > 0 ? 329.6 : 349.6) * (1 + (Math.abs(oldTransform[1][1]) < Math.abs(newTransform[1][1]) ? t : 1-t)), 3)
+
+      // Just play like a sliding sound effect instead
 
       calculator.setExpression({ id: 'a', latex: `a=${a}` });
       calculator.setExpression({ id: 'b', latex: `b=${b}` });

@@ -4,3 +4,12 @@
 .no-cursor-change, .no-cursor-change * {
   cursor: grab !important;
 }
+
+.mq-editable-field .mq-cursor {
+  border-left-color: white !important;
+}
+
+/* .mq-math-mode {
+  text-align: center !important;
+  align-items: center !important;
+} */
