@@ -117,9 +117,6 @@ export const TASK_LIST : Task[] = [
                 spawnCardEntity(card, 0,0)
                 useUIState.getState().addCardToHand(card);
             });
-            // Set the matrix hand to 4 matrices
-            // Make a random transformation from the 4 matrices
-            // Set the target to be hidden
         },
         checkSolution: ()=>{
             return resultEqualsTarget()
@@ -134,10 +131,10 @@ export const TASK_LIST : Task[] = [
         unlockText:"Complete task Simple Transformations 5 times",
         useRNG: () => {
             const rng = randomNumberGenerator(useGameState.getState().seed)
-            return [Math.floor(rng()*8)]
+            return [Math.floor(rng()*4)]
         },
         loadTask: function () {
-            const cards = [
+            const simpleTrans = [
                 numericCard([[2,0],[0,1]], "Scale x by 2"),
                 numericCard([[1,0],[0,2]], "Scale y by 2"),
                 numericCard([[1,1],[0,1]], "Skew x by 1 y"),
@@ -148,17 +145,22 @@ export const TASK_LIST : Task[] = [
                 numericCard([[1,0],[-1,1]], "Skew y by -1 x"),
             ]
             const i = this.useRNG()[0] 
-            const target = {
-                matrix: cards[i].matrix,
+            const target = createCard({
+                matrix: simpleTrans[i].matrix,
                 expressionMatrix: [['?','?'],['?','?']],
                 simplifiedMatrix: [['?','?'],['?','?']],
                 name:'Target'
-            }
+            })
+
+            useUIState.getState().resetUIForNewTask()
+            spawnCardEntity(target, 0,0)
             useGameState.getState().setTargetCard(target)
             useGameState.getState().setFixedLHS([])
-            useUIState.getState().resetUIForNewTask()
-            const addCardToHand = useUIState.getState().addCardToHand
-            cards.forEach(card => addCardToHand(card))
+            getStackProduct()
+            simpleTrans.forEach(card => {
+                spawnCardEntity(card, 0,0)
+                useUIState.getState().addCardToHand(card);
+            });
         },
         checkSolution: ()=>{
             return resultEqualsTarget()

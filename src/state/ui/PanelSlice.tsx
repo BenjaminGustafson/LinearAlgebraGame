@@ -18,5 +18,8 @@ export const createPanelSlice: StateCreator <
   matrixBuilderPanel: false,
   toggleMatrixBuilder: () => set((state) => { state.matrixBuilderPanel = !state.matrixBuilderPanel; }),
   taskMenuPanel: false,
-  toggleTaskMenu: () => set((state) => { state.taskMenuPanel = !state.taskMenuPanel; }),
+  toggleTaskMenu: () => set((state) => { 
+    state.taskMenuPanel = !state.taskMenuPanel; 
+    console.log(state.taskMenuPanel, 'panel')
+  }),
 });

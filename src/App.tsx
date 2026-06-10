@@ -24,8 +24,7 @@ function App() {
   const seed = useGameState(state => state.seed);
 
   useEffect(()=>{
-    if (TASK_LIST[currentTask] && TASK_LIST[currentTask].loadTask)
-      TASK_LIST[currentTask].loadTask(seed)
+    TASK_LIST[currentTask].loadTask()
   }, [])
 
 
@@ -62,7 +61,7 @@ function App() {
       <button
         className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
         style={{ left: 100, top: 50, width: 150, height: 60, fontSize: 24 }}
-        onClick={() => { toggleTaskMenu(); checkTaskUnlocks() }}
+        onClick={() => { toggleTaskMenu(); checkTaskUnlocks(); console.log('open tasks', useUIState.getState().taskMenuOpen)}}
       >
         Task List
       </button>
