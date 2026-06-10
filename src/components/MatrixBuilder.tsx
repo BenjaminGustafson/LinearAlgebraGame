@@ -104,7 +104,8 @@ export default function MatrixBuilder() {
                             key={k}
                             ref={(el) => { if (el) inputRefs.current[k] = el; }}
                             style={{ position: 'absolute', left: i*225+50,top:j*225+50, width: 175, height: 175,
-                                 border: '1px solid white', color: 'white', caretColor: 'white',
+                                 border: '2px solid white', color: 'white', caretColor: 'white', paddingLeft: 5,
+                                 paddingTop: 5,
                                 }}
 
                         />
@@ -144,6 +145,13 @@ export default function MatrixBuilder() {
                         toggleMatrixBuilder()
                     }}
                 >Create</button>
+                <button
+                    className="absolute bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
+                    style={{ left: 930, top: 20, width: 50, height: 50, fontSize: 24 }}
+                    onClick={() => { 
+                        toggleMatrixBuilder()
+                    }}
+                >X</button>
             </div>
         )
     );
